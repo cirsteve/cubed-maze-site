@@ -1,0 +1,21 @@
+.maze-wrapper {
+    height: 500px;
+    width: 400px;
+    float: right;
+    padding: 2px;
+}
+
+.maze-overlay {
+    background-color: purple;
+}
+
+.playarea {
+    border: 1px solid green;
+    width: 100%;
+    height: 100%;
+}
+
+.col-left {
+    width: 300px;
+    float: left;
+}
