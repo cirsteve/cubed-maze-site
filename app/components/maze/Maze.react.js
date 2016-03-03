@@ -1,5 +1,5 @@
 import React from 'react';
-import MazeRenderer from './renderers/ThreeJSRenderer.react';
+import MazeRenderer from './renderers/3dMazeMixin.react';
 import cn from 'classnames';
 
 export default React.createClass({

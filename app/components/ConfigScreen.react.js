@@ -9,10 +9,6 @@ export default React.createClass({
         let dispatch = this.props.dispatch;
         return (
             <div className="configure col-left">
-                <div>
-                    <h5>Controls</h5>
-                    Up: &#8593;
-                </div>
                 Height: <input type="text" value={config.y} onChange={this._onChange.bind(this, 'y')} /> <br />
                 Width: <input type="text" value={config.x} onChange={this._onChange.bind(this, 'x')} /> <br />
                 Levels: <input type="text" value={config.z} onChange={this._onChange.bind(this, 'z')} /> <br />

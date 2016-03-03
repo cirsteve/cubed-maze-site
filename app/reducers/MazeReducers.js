@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import Im from 'immutable';
+import { Map } from 'immutable';
 
-const initialState = Im.Map(
+const initialState = Map(
     {
         position: {
             x: 0,
@@ -19,10 +19,11 @@ export default function (state = initialState, action) {
         case 'updatePosition':
             let update = evaluateMove(action.key, state.maze);
             if (update) {
-                return _.assign({}, state, {position: update});
+                return state.updateIn('position', p=>s.set());
             } else {
                 return state;
             }
+            break;
         default:
             return state;
     }

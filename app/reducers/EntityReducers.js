@@ -1,12 +1,13 @@
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 
-const initialState = Map();
+const initialState = Map({
+    mazes: List()
+});
 
 export default function (state = initialState, action) {
     switch(action.type) {
         case 'MAZE_CREATED':
-            let maze = action.maze;
-            return state.set(maze.id, maze);
+            return state.update('mazes', l=>l,push(action.maze));
             break;
         default:
             return state;
