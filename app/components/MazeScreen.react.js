@@ -6,10 +6,11 @@ import Controls from './maze/Controls.react';
 export default React.createClass({
     render: function () {
         let dispatch = this.props.dispatch;
+
         return (
-            <div className={wrapperClass}>
-                <Maze />
-                <Controls />
+            <div className="maze-screen">
+                <Maze {...this.props}/>
+                <Controls {...this.props}/>
             </div>
             );
     }

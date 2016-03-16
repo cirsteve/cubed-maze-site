@@ -1,13 +1,13 @@
-import { Map, List } from 'immutable';
+import { Map, OrderedMap, fromJS } from 'immutable';
 
 const initialState = Map({
-    mazes: List()
+    mazes: OrderedMap()
 });
 
 export default function (state = initialState, action) {
     switch(action.type) {
         case 'MAZE_CREATED':
-            return state.update('mazes', l=>l,push(action.maze));
+            return state.update('mazes', l=>l.set(action.maze.id, fromJS(action.maze)));
             break;
         default:
             return state;

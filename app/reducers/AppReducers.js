@@ -12,12 +12,16 @@ export default function (state = initialState, action) {
         case 'UPDATE_SCREEN':
             return state.set('action', action.screen);
             break;
-        case 'JOIN_GAME':
-            return state.set('currentMazeId', action.game);
+        case 'INIT_GAME':
+            return state.merge({
+                currentMazeId: action.id,
+                screen: 'maze'
+            });
             break;
         case 'LEAVE_GAME':
-            return state.set({
-                currentMazeId: null
+            return state.merge({
+                currentMazeId: null,
+                screen: 'config'
             });
             break;
         default:

@@ -1,4 +1,4 @@
-import { Map, Record } from 'immutable';
+import { Map } from 'immutable';
 
 const initialState = Map(
     {
@@ -10,14 +10,10 @@ const initialState = Map(
     }
 );
 
-function updateConfig(state, dimension, value) {
-    return state.set(dimension, value);
-};
-
 export default function (state = initialState, action) {
     switch (action.type) {
     case 'UPDATE_CONFIG':
-        return state.set(action.dimension, action.value);
+        return state.merge(action.update);
         break;
     default:
         return state;

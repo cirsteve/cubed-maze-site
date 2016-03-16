@@ -1,25 +1,47 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Config from './ConfigScreen.react';
 import Lobby from './LobbyScreen.react';
 import Maze from './MazeScreen.react';
 
+const stateToProps = function (state) {
+    return {
+        entities: state.entities,
+        app: state.app,
+        config: state.config,
+        maze: state.maze,
+        getMaze: function() {
+            let id = this.app.get('currentMazeId');
+            return id ? this.entities.get('mazes').get(id) : null;
+        },
+        getLevel: function () {
+            let maze = this.getMaze();
+            let level = maze.get('position').get('z');
+            let walls = maze.get('walls').get(level);
+
+            //if not the first level get the z walls for the level above
+            //and add to current level as ceiling walls
+            if (level !== 0) {
+                walls = walls.push(maze.get('walls').get(level-1).get(2));
+            } else {
+                walls = walls.push([]);
+            }
+            return walls;
+        }
+    };
+}
+
 export const App = React.createClass({
     render: function () {
-        let maze = this.props.app.get('currentMazeId') ? <Maze {...this.props} /> : null;
         let screenComponent;
         switch (this.props.app.get('screen')) {
             case 'config':
-                screenComponent = <Config {...this.props} />;
-                break;
-            case 'lobby':
                 screenComponent = <Lobby {...this.props} />;
                 break;
             case 'maze':
                 screenComponent = <Maze {...this.props} />;
                 break;
             default:
-                screenComponent = <Config {...this.props} />;
+                screenComponent = <Lobby {...this.props} />;
         }
         return (
             <div className="span12">
@@ -34,15 +56,4 @@ export const App = React.createClass({
     }
 });
 
-const stateToProps = function (state) {
-    return {
-        entities: state.entities,
-        app: state.app,
-        config: state.config,
-        maze: state.maze,
-        getMaze: function() {
-            this.entitites.get(this.app.get('currentMazeId'));
-        }
-    };
-}
 export default connect(stateToProps)(App);

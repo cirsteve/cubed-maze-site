@@ -1,0 +1,44 @@
+.maze-2d {
+    height: 504px;
+    width: 504px;
+    border: 2px solid blue;
+}
+
+.column {
+    width: 50px;
+    display: inline-block;
+}
+
+.node {
+    background-color: lightgray;
+    border: 2px solid lighten(lightgray, 20%);
+    height: 46px;
+    width: 46px;
+    display:flex;
+    position: relative;
+    &.east-wall {
+        border-right: 2px solid black;
+    }
+    &.north-wall {
+        border-top: 2px solid black;
+    }
+}
+
+.open-floor {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid green;
+}
+
+.open-ceiling {
+
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid black;
+}

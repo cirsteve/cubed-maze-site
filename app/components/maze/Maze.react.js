@@ -1,20 +1,19 @@
 import React from 'react';
-import MazeRenderer from './renderers/3dMazeMixin.react';
 import cn from 'classnames';
+
+import MazeRenderer from './renderers/2dCSS.react';
 
 export default React.createClass({
     render: function () {
-        let maze = this.props.config.currentMaze;
-        let mazeComponent = maze ?
-            <MazeRenderer app={this.props.app} /> :
-            null;
+        let maze = this.props.getMaze();
+        let mazeComponent = <MazeRenderer {...this.props} />;
         let wrapperClass = cn({
             'maze-wrapper': true
         });
         return (
             <div className={wrapperClass}>
                 <div className="current-level">
-                  Current Level {this.props.maze.get('position').z}
+                  Current Level {maze.get('position').get('z')}
                 </div>
                 <div className="playarea">
                     { mazeComponent }

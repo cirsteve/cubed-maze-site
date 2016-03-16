@@ -1,7 +1,6 @@
-export function updateConfig(dimension, value) {
+export function updateConfig(update) {
     return {
         type: 'UPDATE_CONFIG',
-        dimension: dimension,
-        value: value
+        update
     };
 };

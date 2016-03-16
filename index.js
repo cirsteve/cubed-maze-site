@@ -18,6 +18,9 @@ app.post('/create', function (req, res) {
     maze.id = uuid.v4();
     maze.name= name;
 
+    //set initial position on maze object
+    maze.position = {x:0, y:0, z:0};
+
     res.send(maze);
 });
 

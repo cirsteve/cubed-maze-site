@@ -1,6 +1,6 @@
 import React from 'react';
-import { updateConfig } from '../actions/ConfigActions';
-import { createMaze } from '../actions/AppActions';
+import { updateConfig } from '../../actions/ConfigActions';
+import { createMaze } from '../../actions/AppActions';
 
 export default React.createClass({
     render: function () {
@@ -26,12 +26,13 @@ export default React.createClass({
     },
     _onChange: function (dimension, value) {
         let val = '';
+        let update = {};
         if (dimension === 'name') {
             val = value.target.value;
         } else {
             val = value.target.value === '' ? '' : parseInt(value.target.value, 10);
         }
-
-        this.props.dispatch(updateConfig(dimension, val));
+        update[dimension] = val;
+        this.props.dispatch(updateConfig(update));
     }
 });

@@ -5,21 +5,13 @@ export function initGame (id) {
     //exit lobby and enter game play mode
     return {
         type: 'INIT_GAME',
-        id: id
+        id
     };
 };
 
 export function endGame () {
     return {
         type: 'END_GAME'
-    };
-};
-
-
-export function joinGame (game) {
-    return {
-        type: 'JOIN_GAME',
-        game
     };
 };
 
@@ -43,6 +35,10 @@ export function createMaze(config) {
             body: JSON.stringify({config:config})
         })
         .then(response => response.json())
-        .then(json => dispatch(mazeCreated(json)));
+        .then(json => {
+            dispatch(mazeCreated(json))
+            dispatch(initGame(json.id))
+        });
+
     };
 };
