@@ -2,6 +2,17 @@ require('../../../styling/2dcss.less');
 import React from 'react';
 import cn from 'classnames';
 
+let Marker = React.createClass({
+    render: function () {
+        let ns = this.props.nodeSize;
+        let styles = {
+            left: this.props.position.x * ns + (ns/4),
+            bottom: this.props.position.y * ns + (ns/4)
+        };
+        return (<div className="marker" style={styles}></div>);
+    }
+});
+
 let Node = React.createClass({
     render: function () {
         let nodeClass = cn({
@@ -65,10 +76,10 @@ export default React.createClass({
             cols.push(<Column key={i} col={[xCol, yCol, zfCol, zcCol]} />);
         }
 
-
         return (
             <div className="maze-2d">
                 {cols}
+                <Marker position={this.props.maze.get('position')} nodeSize={50} />
             </div>
         )
     },

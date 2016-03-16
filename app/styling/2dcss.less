@@ -2,8 +2,18 @@
     height: 504px;
     width: 504px;
     border: 2px solid blue;
+    position: relative;
 }
 
+.marker{
+    position: absolute;
+    background-color: yellow;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    z-index: 100;
+
+}
 .column {
     width: 50px;
     display: inline-block;
@@ -12,8 +22,8 @@
 .node {
     background-color: lightgray;
     border: 2px solid lighten(lightgray, 20%);
-    height: 46px;
-    width: 46px;
+    height: 50px;
+    width: 50px;
     display:flex;
     position: relative;
     &.east-wall {
