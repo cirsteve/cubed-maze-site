@@ -2,6 +2,7 @@ import React from 'react';
 import cn from 'classnames';
 
 import MazeRenderer from './renderers/2dCSS.react';
+import M from '../../maze';
 
 export default React.createClass({
     render: function () {
@@ -13,7 +14,7 @@ export default React.createClass({
         return (
             <div className={wrapperClass}>
                 <div className="current-level">
-                  Current Level {maze.get('position').get('z')}
+                  Current Level {this.props.maze.get('position')[2]}
                 </div>
                 <div className="playarea">
                     { mazeComponent }

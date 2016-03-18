@@ -9,8 +9,12 @@ export default React.createClass({
 
         return (
             <div className="maze-screen">
-                <Maze {...this.props}/>
-                <Controls {...this.props}/>
+                <div className="controls-section">
+                    <Controls {...this.props}/>
+                </div>
+                <div className="maze-section">
+                    <Maze {...this.props}/>
+                </div>
             </div>
             );
     }

@@ -1,17 +1,16 @@
-.maze-wrapper {
-    height: 500px;
-    width: 400px;
-    float: right;
-    padding: 2px;
-}
 
 .maze-overlay {
     background-color: purple;
 }
 
-.playarea {
+.maze-section {
     width: 100%;
     height: 100%;
+    margin-left: 120px;
+}
+
+.controls-section {
+    width: 100px;
 }
 
 .col-left {

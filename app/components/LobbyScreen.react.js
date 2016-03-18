@@ -38,6 +38,6 @@ export default React.createClass({
             );
     },
     _onQuickStart: function () {
-        this.props.dispatch(createMaze({x:10, y:10, z:4}));
+        this.props.dispatch(createMaze({x:8, y:10, z:4}));
     }
 })

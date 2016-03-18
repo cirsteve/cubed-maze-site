@@ -15,7 +15,7 @@ const stateToProps = function (state) {
         },
         getLevel: function () {
             let maze = this.getMaze();
-            let level = maze.get('position').get('z');
+            let level = this.maze.get('position')[2];
             let walls = maze.get('walls').get(level);
 
             //if not the first level get the z walls for the level above

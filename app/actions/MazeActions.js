@@ -5,11 +5,17 @@ export function startGame (game) {
     };
 }
 
-export function updatePosition ( game, player, position) {
+export function evaluateMove ( current, proposed) {
+    return {
+        type: 'EVALUATE_MOVE',
+        current,
+        proposed
+    };
+}
+
+export function updatePosition ( position ) {
     return {
         type: 'UPDATE_POSITION',
-        game,
-        player,
         position
     };
 }

@@ -6,8 +6,8 @@ let Marker = React.createClass({
     render: function () {
         let ns = this.props.nodeSize;
         let styles = {
-            left: this.props.position.x * ns + (ns/4),
-            bottom: this.props.position.y * ns + (ns/4)
+            left: this.props.position[0] * ns + (ns/4),
+            bottom: this.props.position[1] * ns + (ns/4)
         };
         return (<div className="marker" style={styles}></div>);
     }
@@ -41,12 +41,11 @@ let Column = React.createClass({
     render: function () {
         let nodes = [];
         let col = this.props.col;
-        let length = col[2].length;
-        for (let i = 0; i < length; i++) {
-            let x = col[0][i] && col[0][i].exists;// === '1';
-            let y = col[1][i] && col[1][i].exists;// === '1';
-            let zf = col[2][i] && col[2][i].exists;// === '1';
-            let zc = col[3][i] ? col[3][i].exists : true;// === '1';
+        for (let i = 0; i < this.props.rowCount; i++) {
+            let x = col[0][i] && col[0][i] === '1';
+            let y = col[1][i] && col[1][i] === '1';
+            let zf = col[2][i] ? col[2][i] === '1' : true;
+            let zc = col[3][i] ? col[3][i] === '1' : true;
 
             nodes.unshift(<Node key={i} x={x} y={y} zf={zf} zc={zc} />);
         };
@@ -63,17 +62,19 @@ export default React.createClass({
     render: function () {
         let level = this.props.getLevel().toJS();
         let cols = [];
+        let colCount = this.props.getMaze().get('dimensions').get('x');
+        let rowCount = this.props.getMaze().get('dimensions').get('y');
         let buildColumn = function (cols, z, i) {
 
             return cols;
         };
         //iterate over the zf walls
-        for (let i=0;i<level[2].length;i++) {
+        for (let i=0;i<colCount;i++) {
             let xCol = level[0][i] || [];
             let yCol =  level[1][i] || [];
             let zfCol =  level[2][i] || [];
             let zcCol =  level[3][i] || [];
-            cols.push(<Column key={i} col={[xCol, yCol, zfCol, zcCol]} />);
+            cols.push(<Column key={i} col={[xCol, yCol, zfCol, zcCol]} rowCount={rowCount}/>);
         }
 
         return (

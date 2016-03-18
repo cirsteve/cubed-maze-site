@@ -34,6 +34,7 @@
     "pixi.js": "^3.0.9",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
+    "react-fontawesome": "^0.3.3",
     "react-pixi": "^0.7.4",
     "react-redux": "^4.0.6",
     "react-three": "^0.7.5",
