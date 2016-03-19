@@ -19,3 +19,9 @@ export function updatePosition ( position ) {
         position
     };
 }
+
+export function togglePath () {
+    return {
+        type: 'TOGGLE_PATH'
+    };
+}

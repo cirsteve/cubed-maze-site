@@ -1,8 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser')
-var CubeMaze = require('maze-cube');
+var CM = require('maze-cube');
 var uuid = require('node-uuid');
-var M = require('./app/maze');
 
 var app = express();
 
@@ -15,7 +14,7 @@ app.get('/', function (req, res) {
 app.post('/create', function (req, res) {
     var body = req.body;
     var config = body && (body.config.y && body.config.x && body.config.z) ? body.config : {x:10, y:10, z: 5};
-    var maze = new M.Maze(config);
+    var maze = new CM.Maze(config);
 
     res.send({
         id: uuid.v4(),

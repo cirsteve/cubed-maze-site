@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import FA from 'react-fontawesome'
-import M from '../../maze';
+import M from 'maze-cube';
 import { updatePosition } from '../../actions/MazeActions';
 
 const moveMap = {

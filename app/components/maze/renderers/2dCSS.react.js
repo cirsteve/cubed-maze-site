@@ -2,6 +2,8 @@ require('../../../styling/2dcss.less');
 import React from 'react';
 import cn from 'classnames';
 
+import M from 'maze-cube';
+
 let Marker = React.createClass({
     render: function () {
         let ns = this.props.nodeSize;
@@ -18,7 +20,7 @@ let Node = React.createClass({
         let nodeClass = cn({
             'node': true,
             'east-wall': this.props.x,
-            'north-wall': this.props.y,
+            'north-wall': this.props.y
         });
         let floorClass = cn({
             'open-floor': true,
@@ -28,11 +30,16 @@ let Node = React.createClass({
             'open-ceiling': true,
             'hide': this.props.zc
         });
+        let pathClass = cn ({
+            'path': true,
+            'hide': !this.props.inPath
+        });
 
         return (
             <div className={nodeClass}>
                 <div className={floorClass}></div>
                 <div className={ceilingClass}></div>
+                <div className={pathClass}></div>
             </div>);
     }
 });
@@ -41,13 +48,14 @@ let Column = React.createClass({
     render: function () {
         let nodes = [];
         let col = this.props.col;
+        let path;
         for (let i = 0; i < this.props.rowCount; i++) {
             let x = col[0][i] && col[0][i] === '1';
             let y = col[1][i] && col[1][i] === '1';
             let zf = col[2][i] ? col[2][i] === '1' : true;
             let zc = col[3][i] ? col[3][i] === '1' : true;
-
-            nodes.unshift(<Node key={i} x={x} y={y} zf={zf} zc={zc} />);
+            path = this.props.maze.get('showPath') && this.props.path.map(p=>p.join('')).includes(''+this.props.colIndex+i+this.props.level)
+            nodes.unshift(<Node key={i} x={x} y={y} zf={zf} zc={zc} inPath={path} />);
         };
         return (
             <div className="column">
@@ -61,20 +69,19 @@ export default React.createClass({
     UNIT_LENGTH: 30,
     render: function () {
         let level = this.props.getLevel().toJS();
+        let maze = this.props.getMaze();
         let cols = [];
-        let colCount = this.props.getMaze().get('dimensions').get('x');
-        let rowCount = this.props.getMaze().get('dimensions').get('y');
-        let buildColumn = function (cols, z, i) {
-
-            return cols;
-        };
+        let colCount = maze.get('dimensions').get('x');
+        let rowCount = maze.get('dimensions').get('y');
+        let dim = maze.get('dimensions');
+        let path = M.path(maze.get('walls').toJS(), this.props.maze.get('position'), [dim.get('x')-1, dim.get('y')-1, dim.get('z')-1]);
         //iterate over the zf walls
         for (let i=0;i<colCount;i++) {
             let xCol = level[0][i] || [];
             let yCol =  level[1][i] || [];
             let zfCol =  level[2][i] || [];
             let zcCol =  level[3][i] || [];
-            cols.push(<Column key={i} col={[xCol, yCol, zfCol, zcCol]} rowCount={rowCount}/>);
+            cols.push(<Column key={i} col={[xCol, yCol, zfCol, zcCol]} maze={this.props.maze} path={path} colIndex={i} level={this.props.maze.get('position')[2]} rowCount={rowCount}/>);
         }
 
         return (
