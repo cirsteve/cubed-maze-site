@@ -7,13 +7,7 @@ export function initGame (id) {
         type: 'INIT_GAME',
         id
     };
-};
-
-export function endGame () {
-    return {
-        type: 'END_GAME'
-    };
-};
+}
 
 export function getNewMaze(config) {
     return {

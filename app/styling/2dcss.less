@@ -1,8 +1,7 @@
+@import "variables.less";
 .maze-2d {
-    height: 504px;
-    width: 404px;
-    border: 2px solid blue;
     position: relative;
+    background-color:blue
 }
 
 .marker{
@@ -14,6 +13,40 @@
     z-index: 100;
 
 }
+.overlay-wrapper {
+    position: absolute;
+    z-index: 100;
+    background-color: @orange;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    padding-top: 30%;
+    text-align: center;
+    font-size: 2em;
+}
+
+.success-overlay {
+    position: absolute;
+    z-index: 90;
+    height: 100%;
+    width: 100%;
+    top: 0;
+
+    text-align: center;
+
+    opacity: 0.6;
+}
+.success-message {
+    position: absolute;
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    padding-top: 30%;
+    text-align: center;
+    font-size: 2em;
+}
+
 .column {
     width: 50px;
     display: inline-block;

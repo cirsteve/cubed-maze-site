@@ -5,18 +5,17 @@ export function startGame (game) {
     };
 }
 
-export function evaluateMove ( current, proposed) {
+export function endGame () {
     return {
-        type: 'EVALUATE_MOVE',
-        current,
-        proposed
+        type: 'END_GAME'
     };
-}
+};
 
-export function updatePosition ( position ) {
+export function updatePosition ( position, atGoal ) {
     return {
         type: 'UPDATE_POSITION',
-        position
+        position,
+        atGoal
     };
 }
 

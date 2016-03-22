@@ -74,20 +74,26 @@ export default React.createClass({
         let colCount = maze.get('dimensions').get('x');
         let rowCount = maze.get('dimensions').get('y');
         let dim = maze.get('dimensions');
-        let path = M.path(maze.get('walls').toJS(), this.props.maze.get('position'), [dim.get('x')-1, dim.get('y')-1, dim.get('z')-1]);
+        let path = M.path(maze.get('walls').toJS(), this.props.maze.get('position').toJS(), [dim.get('x')-1, dim.get('y')-1, dim.get('z')-1]);
         //iterate over the zf walls
         for (let i=0;i<colCount;i++) {
             let xCol = level[0][i] || [];
             let yCol =  level[1][i] || [];
             let zfCol =  level[2][i] || [];
             let zcCol =  level[3][i] || [];
-            cols.push(<Column key={i} col={[xCol, yCol, zfCol, zcCol]} maze={this.props.maze} path={path} colIndex={i} level={this.props.maze.get('position')[2]} rowCount={rowCount}/>);
+            cols.push(<Column
+                key={i}
+                col={[xCol, yCol, zfCol, zcCol]}
+                maze={this.props.maze}
+                path={path} colIndex={i}
+                level={this.props.maze.get('position').get(2)}
+                rowCount={rowCount}/>);
         }
 
         return (
             <div className="maze-2d">
                 {cols}
-                <Marker position={this.props.maze.get('position')} nodeSize={50} />
+                <Marker position={this.props.maze.get('position').toJS()} nodeSize={50} />
             </div>
         )
     },

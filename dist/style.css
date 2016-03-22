@@ -1,6 +1,11 @@
+#react-target {
+    width: 700px
+}
 
-.maze-overlay {
-    background-color: purple;
+.maze-screen{
+    position: relative;
+    height: 700px;
+    width: 550px;
 }
 
 .maze-section {

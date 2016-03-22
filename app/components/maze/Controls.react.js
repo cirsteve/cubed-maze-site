@@ -1,16 +1,16 @@
 import React from 'react';
 import cn from 'classnames';
-import FA from 'react-fontawesome'
+import FA from 'react-fontawesome';
 import M from 'maze-cube';
 import { updatePosition } from '../../actions/MazeActions';
 
 const moveMap = {
-    37:p=>p-100,
-    38:p=>p+10,
-    39:p=>p+100,
-    40:p=>p-10,
-    87:p=>p-1,
-    83:p=>p+1
+    37:p=>[p[0]-1, p[1], p[2]],
+    38:p=>[p[0], p[1]+1, p[2]],
+    39:p=>[p[0]+1, p[1], p[2]],
+    40:p=>[p[0], p[1]-1, p[2]],
+    87:p=>[p[0], p[1], p[2]-1],
+    83:p=>[p[0], p[1], p[2]+1]
 };
 
 export default React.createClass({
@@ -46,12 +46,12 @@ export default React.createClass({
         window.removeEventListener('keydown', this._keydown)
     },
     _keydown: function (e) {
-        console.log(e);
-        let current = this.props.maze.get('position');
-        let update = moveMap[e.keyCode](parseInt(current.join(''), 10))
-        .toString().split('').map(p=>parseInt(p,10));
+        let current = this.props.maze.get('position').toJS();
+        let update = moveMap[e.keyCode](current);
+        let dim = this.props.getMaze().get('dimensions');
         if (M.evaluate(this.props.getMaze().toJS().walls, current, update)) {
-            this.props.dispatch(updatePosition(update));
+            let atEnd = parseInt(update.join(''), 10) - parseInt([dim.get('x')-1, dim.get('y')-1, dim.get('z')-1].join(''), 10) === 0;
+            this.props.dispatch(updatePosition(update, atEnd));
         }
     }
 })

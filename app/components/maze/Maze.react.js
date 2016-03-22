@@ -16,7 +16,7 @@ export default React.createClass({
             <div className={wrapperClass}>
                 <div className="current-level">
                     Show Path<input type="checkbox" onChange={this._togglePath} checked={this.props.maze.get('showPath')} />
-                  Current Level {this.props.maze.get('position')[2]}
+                  Current Level {this.props.maze.get('position').get(2)+1}
                 </div>
                 <div className="playarea">
                     { mazeComponent }

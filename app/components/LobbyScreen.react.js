@@ -1,8 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
-import { joinGame, createMaze } from '../actions/AppActions';
-
-import Config from './lobby/Config.react';
+import { createMaze } from '../actions/AppActions';
+import Menu from './lobby/SinglePlayerMenu.react';
 
 let Item = React.createClass({
     render: function () {
@@ -21,9 +20,6 @@ let Item = React.createClass({
 
 export default React.createClass({
     render: function () {
-        let dispatch = this.props.dispatch;
-        let items = this.props.entities.toArray().map(
-            (entity, i)=><Item key={i} dispatch={dispatch} {...entity}/>);
         let wrapperClass = cn({
             'lobby-screen': true,
             'row': true
@@ -31,13 +27,9 @@ export default React.createClass({
         return (
             <div className={wrapperClass}>
                 <div className="col-xs-4 col-xs-offset-4">
-                    <input type="button" onClick={this._onQuickStart} value="Quick Start" />
-                    <Config {...this.props} />
+                    <Menu {...this.props} />
                 </div>
             </div>
             );
-    },
-    _onQuickStart: function () {
-        this.props.dispatch(createMaze({x:8, y:10, z:4}));
     }
 })
