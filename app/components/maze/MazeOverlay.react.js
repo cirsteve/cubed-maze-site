@@ -28,7 +28,6 @@ export default React.createClass({
         return {count:3, start:false};
     },
     componentWillUnmount: function () {
-        console.log('unmount overlay');
         clearInterval(this.countdownInterval);
         clearInterval(this.checkInterval);
     },
@@ -38,14 +37,12 @@ export default React.createClass({
         this.checkInterval = setInterval(this._checkCountdown, 1001);
     },
     _checkCountdown: function () {
-        console.log('check: ', this.state.count);
         if (this.state.count < 1) {
             this.props.dispatch(startGame());
         }
     },
     _countdown: function () {
         let count = this.state.count;
-        console.log('counting down', count);
         this.setState({count: --count, start:true})
 
     }

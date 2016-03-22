@@ -4,6 +4,10 @@
     background-color:blue
 }
 
+.maze-section {
+    position: relative;
+}
+
 .marker{
     position: absolute;
     background-color: yellow;
@@ -25,26 +29,20 @@
     font-size: 2em;
 }
 
-.success-overlay {
-    position: absolute;
-    z-index: 90;
-    height: 100%;
-    width: 100%;
-    top: 0;
-
-    text-align: center;
-
-    opacity: 0.6;
+.maze-wrapper.game-over {
+    opacity: 0.5;
 }
-.success-message {
+
+.success-message, expired-message {
     position: absolute;
     z-index: 100;
-    height: 100%;
-    width: 100%;
-    top: 0;
+    height: 30%;
+    width: 60%;
+    top: 15%;
     padding-top: 30%;
     text-align: center;
     font-size: 2em;
+    background-color: white;
 }
 
 .column {

@@ -6,17 +6,14 @@ import { createMaze } from '../../actions/AppActions';
 export default React.createClass({
     render: function () {
         let wrapperClass = cn({
+            'success-message': true,
             'hide': !this.props.gameOver
         });
         return (
             <div className={wrapperClass}>
-                <div className="success-overlay">
-                </div>
-                <div className="success-message">
-                    <h3>You completed the maze!</h3>
-                    <h6>Want more?</h6>
-                    <button onClick={this._nextLevel}>Next Level</button>
-                </div>
+                <h3>You did it!</h3>
+                <h4>Can you go higher?</h4>
+                <button onClick={this._nextLevel}>Next Level</button>
             </div>
         );
     },
