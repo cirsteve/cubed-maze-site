@@ -14,12 +14,12 @@ export default React.createClass({
             );
     },
     _onEasy: function () {
-        this.props.dispatch(createMaze({x:5, y:5, z:2}));
+        this.props.dispatch(createMaze({x:4, y:4, z:2}));
     },
     _onMedium: function () {
-        this.props.dispatch(createMaze({x:8, y:8, z:2}));
+        this.props.dispatch(createMaze({x:7, y:7, z:2}));
     },
     _onHard: function () {
-        this.props.dispatch(createMaze({x:11, y:11, z:2}));
+        this.props.dispatch(createMaze({x:10, y:10, z:2}));
     },
 });

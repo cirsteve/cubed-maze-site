@@ -6,6 +6,8 @@
 
 .maze-section {
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 .marker{
@@ -17,6 +19,7 @@
     z-index: 100;
 
 }
+
 .overlay-wrapper {
     position: absolute;
     z-index: 100;
@@ -24,25 +27,17 @@
     height: 100%;
     width: 100%;
     top: 0;
+    left: 0;
     padding-top: 30%;
     text-align: center;
     font-size: 2em;
 }
 
-.maze-wrapper.game-over {
-    opacity: 0.5;
-}
-
-.success-message, expired-message {
-    position: absolute;
-    z-index: 100;
-    height: 30%;
-    width: 60%;
-    top: 15%;
-    padding-top: 30%;
-    text-align: center;
-    font-size: 2em;
-    background-color: white;
+.maze-wrapper {
+    background-color: lighten(@brown, 30%);
+    &.game-over {
+        opacity: 0.5;
+    }
 }
 
 .column {

@@ -16,25 +16,34 @@ const moveMap = {
 export default React.createClass({
     render: function () {
         return (
-            <div className="controls">
-                Controls
-                <div>
-                    North: <FA name="arrow-up" />
+            <div className="controls-group">
+                <div className="direction-controls">
+                    <div>
+                        <div>
+                            <FA name="arrow-up" size="2x" />
+                        </div>
+                    </div>
+                    <div className="center">
+                        <div>
+                            <FA name="arrow-left" size="2x" />
+                        </div>
+                        <div>
+                            <FA name="arrow-right" size="2x" />
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <FA name="arrow-down" size="2x" />
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    South: <FA name="arrow-down" />
-                </div>
-                <div>
-                    East:  <FA name="arrow-right" />
-                </div>
-                <div>
-                    West:  <FA name="arrow-left" />
-                </div>
-                <div>
-                    Level Up: 'w'
-                </div>
-                <div>
-                    Level Down: 's'
+                <div className="level-controls">
+                    <div>
+                        Level + w
+                    </div>
+                    <div>
+                        Level - s
+                    </div>
                 </div>
             </div>
             );

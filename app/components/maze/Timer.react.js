@@ -13,7 +13,7 @@ export default React.createClass({
         });
         return (
             <div className={wrapperClass}>
-                {this.state.minutes}:{this.state.seconds}
+                {this.state.minutes}:{this.state.seconds<10?0:''}{this.state.seconds}
             </div>
         );
     },
@@ -24,24 +24,23 @@ export default React.createClass({
     componentDidMount: function () {
         this.interval = setInterval(this.updateTimer, 1000);
     },
+    **/
     componentWillUnmount: function () {
         this.stopTimer();
     },
-    **/
     componentWillReceiveProps: function (newProps) {
         if (newProps.atGoal) {
             this.stopTimer();
         } else if (!this.interval && newProps.gameOn) {
             this.startTimer();
-        } else if (newProps.preplay && this.state.minutes !== this.getMaxTime().minutes) {
-            this.setState(this.getMaxTime());
+        } else if (newProps.preplay) {
+            this.setState(this.getMaxTime(newProps.level));
         }
     },
     updateTimer: function () {
         let seconds = this.state.minutes * 60 + this.state.seconds - 1;
-        if (seconds !== 0) {
-            this.setState(this.getTime(seconds));
-        } else {
+        this.setState(this.getTime(seconds));
+        if (seconds === 0) {
             this.stopTimer();
             this.props.dispatch(endGame());
         }
@@ -58,8 +57,9 @@ export default React.createClass({
         let m = (seconds - s) / 60;
         return {seconds:s, minutes:m};
     },
-    getMaxTime: function () {
+    getMaxTime: function (level) {
         //returns the total seconds for each level
-        return this.getTime(this.props.level * 60);
+        level = level || this.props.level;
+        return this.getTime(level * 60);
     }
 });

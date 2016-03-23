@@ -1,0 +1,48 @@
+@import "variables.less";
+.controls-group {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    .level-controls {
+        display: flex;
+        flex-direction: column;
+    }
+    .direction-controls {
+        display: flex;
+        flex-direction: column;
+        height: 20%;
+        width: 20%;
+        &>div {
+            display: flex;
+            justify-content: center;
+        }
+        .center{
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+}
+
+.success-message, .expired-message {
+    position: absolute;
+    z-index: 100;
+    height: 30%;
+    width: 60%;
+    top: 10%;
+    left: 20%;
+    padding: 5px;
+    text-align: center;
+    font-size: 2em;
+    color: white;
+    button {
+        color: darken(@blue, 10%);
+    }
+}
+
+.success-message {
+    background-color: lighten(@success, 20%);
+}
+
+.expired-message {
+    background-color: lighten(@fail, 20%);
+}

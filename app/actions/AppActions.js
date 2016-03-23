@@ -9,12 +9,18 @@ export function initGame (id) {
     };
 }
 
+export function leaveGame() {
+    return {
+        type: 'LEAVE_GAME'
+    };
+}
+
 export function getNewMaze(config) {
     return {
         type: 'GET_NEW_MAZE',
         config: config
     };
-};
+}
 
 export function createMaze(config) {
     return function (dispatch) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import cn from 'classnames';
+import FA from 'react-fontawesome';
 import Maze from './maze/Maze.react';
 import Controls from './maze/Controls.react';
 import Overlay from './maze/MazeOverlay.react';
@@ -7,7 +8,9 @@ import Success from './maze/Success.react';
 import TimeExpired from './maze/TimeExpired.react';
 import Timer from './maze/Timer.react';
 
+
 import { togglePath } from '../actions/MazeActions';
+import { createGame, leaveGame } from '../actions/AppActions';
 
 export default React.createClass({
     render: function () {
@@ -20,11 +23,13 @@ export default React.createClass({
         let timer = <Timer level={dimensions.z}
             atGoal={gameState === 'success'}
             gameOn={gameOn}
-            preplay={gameState ==='preplay'?true:false}
+            preplay={gameState ==='preplay' ?true:false}
             dispatch={this.props.dispatch} />;
         return (
             <div className="maze-screen">
                 <div className="menu-group">
+                    <FA name="home" onClick={this._leaveGame} />
+                    <FA name="refresh" onClick={this._refreshLevel} />
                     <div className="path-button menu-item">
                         Show Path <input type="checkbox"
                             onChange={this._togglePath}
@@ -39,15 +44,17 @@ export default React.createClass({
                 </div>
                 <div className="maze-section">
                     <Maze {...this.props} />
+
                     <Success gameOver={gameState === 'success'? true : false}
                     dimensions={dimensions}
                     dispatch={this.props.dispatch} />
+
                     <TimeExpired timeExpired={gameState === 'lost' ? true : false}
                     dimensions={dimensions}
                     dispatch={this.props.dispatch} />
                     {overlay}
                 </div>
-                <div className="controls-section menu-group">
+                <div className="controls-section">
                     {controls}
                 </div>
             </div>
@@ -55,5 +62,11 @@ export default React.createClass({
     },
     _togglePath: function () {
         this.props.dispatch(togglePath())
+    },
+    _leaveGame: function () {
+        this.props.dispatch(leaveGame());
+    },
+    _refreshLevel: function () {
+        this.props.dispatch(createGame(this.props.getMaze().get('dimensions').toJS()));
     }
 })

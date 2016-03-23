@@ -1,3 +1,4 @@
+require('../styling/app.less');
 import React from 'react';
 import { connect } from 'react-redux';
 import Lobby from './LobbyScreen.react';

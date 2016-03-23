@@ -1,3 +1,4 @@
+require('../../styling/maze.less');
 import React from 'react';
 import cn from 'classnames';
 
@@ -10,7 +11,7 @@ export default React.createClass({
         let mazeComponent = <MazeRenderer {...this.props} />;
         let wrapperClass = cn({
             'maze-wrapper': true,
-            'game-over': maze.get('gameState') === 'success' || maze.get('gameState') === 'success'
+            'game-over': maze.get('gameState') === 'success' || maze.get('gameState') === 'lost'
         });
 
         return (
