@@ -14,6 +14,11 @@ const stateToProps = function (state) {
             let id = this.app.get('currentMazeId');
             return id ? this.entities.get('mazes').get(id) : null;
         },
+        getGoal: function () {
+            let maze = this.getMaze();
+            let dimensions = maze && maze.get('dimensions');
+            return dimensions && [dimensions.get('x')-1, dimensions.get('y')-1, dimensions.get('z')-1];
+        },
         getLevel: function () {
             let maze = this.getMaze();
             let level = this.maze.get('position').get(2);
@@ -45,11 +50,9 @@ export const App = React.createClass({
                 screenComponent = <Lobby {...this.props} />;
         }
         return (
-            <div className="span12">
-                <div className="row">
-                    <div className="col-xs-12 text-center">
-                        <h2>Cubed Maze</h2>
-                    </div>
+            <div className="">
+                <div className="-title-wrapper">
+                    <h2>Cubed Maze</h2>
                 </div>
                 {screenComponent}
             </div>

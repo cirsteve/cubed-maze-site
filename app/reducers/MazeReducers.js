@@ -18,7 +18,7 @@ export default function (state = initialState, action) {
             if (action.atGoal) {
                 return state.merge({
                     position: action.position,
-                    'gameState': 'success'
+                    gameState: 'success'
                 });
             } else {
                 return state.set('position', fromJS(action.position));

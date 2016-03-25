@@ -21,14 +21,11 @@ let Item = React.createClass({
 export default React.createClass({
     render: function () {
         let wrapperClass = cn({
-            'lobby-screen': true,
-            'row': true
+            'lobby-screen': true
         });
         return (
             <div className={wrapperClass}>
-                <div className="col-xs-4 col-xs-offset-4">
                     <Menu {...this.props} />
-                </div>
             </div>
             );
     }

@@ -1,6 +1,7 @@
 require('../../../styling/2dcss.less');
 import React from 'react';
 import cn from 'classnames';
+import FA from 'react-fontawesome';
 
 import M from 'maze-cube';
 
@@ -22,24 +23,26 @@ let Node = React.createClass({
             'east-wall': this.props.x,
             'north-wall': this.props.y
         });
-        let floorClass = cn({
-            'open-floor': true,
-            'hide': this.props.zf
-        });
-        let ceilingClass = cn ({
+        let ceilingClass = cn({
             'open-ceiling': true,
             'hide': this.props.zc
+        });
+        let floorClass = cn ({
+            'open-floor': true,
+            'hide': this.props.zf
         });
         let pathClass = cn ({
             'path': true,
             'hide': !this.props.inPath
         });
+        let goal = this.props.isGoal ? <FA name="star" size="2x" className="goal-node" /> : null;
 
         return (
             <div className={nodeClass}>
                 <div className={floorClass}></div>
                 <div className={ceilingClass}></div>
                 <div className={pathClass}></div>
+                {goal}
             </div>);
     }
 });
@@ -48,16 +51,23 @@ let Column = React.createClass({
     render: function () {
         let nodes = [];
         let col = this.props.col;
-        let path;
+        let path, coords;
         for (let i = 0; i < this.props.rowCount; i++) {
             let x = col[0][i] && col[0][i] === '1';
             let y = col[1][i] && col[1][i] === '1';
-            let zf = col[2][i] ? col[2][i] === '1' : true;
-            let zc = col[3][i] ? col[3][i] === '1' : true;
+            let zc = col[2][i] ? col[2][i] === '1' : true;
+            let zf = col[3][i] ? col[3][i] === '1' : true;
+            coords = ''+this.props.colIndex+i+this.props.level
             path = this.props.maze.get('showPath') &&
                 this.props.path.map(p=>p.join(''))
-                .includes(''+this.props.colIndex+i+this.props.level)
-            nodes.unshift(<Node key={i} x={x} y={y} zf={zf} zc={zc} inPath={path} />);
+                .includes(coords)
+            nodes.unshift(<Node key={i}
+                x={x}
+                y={y}
+                zf={zf}
+                zc={zc}
+                inPath={path}
+                isGoal={coords === this.props.goal.join('') ? true : false} />);
         };
         return (
             <div className="column">
@@ -76,9 +86,10 @@ export default React.createClass({
         let colCount = maze.get('dimensions').get('x');
         let rowCount = maze.get('dimensions').get('y');
         let dim = maze.get('dimensions');
+        let goal = this.props.getGoal();
         let path = M.path(maze.get('walls').toJS(),
             this.props.maze.get('position').toJS(),
-            [dim.get('x')-1, dim.get('y')-1, dim.get('z')-1]);
+            goal);
         //iterate over the zf walls
         for (let i=0;i<colCount;i++) {
             let xCol = level[0][i] || [];
@@ -91,7 +102,8 @@ export default React.createClass({
                 path={path}
                 colIndex={i}
                 level={this.props.maze.get('position').get(2)}
-                rowCount={rowCount} />);
+                rowCount={rowCount}
+                goal={goal} />);
         }
 
         return (

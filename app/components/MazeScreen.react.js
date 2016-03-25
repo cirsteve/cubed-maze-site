@@ -7,9 +7,10 @@ import Overlay from './maze/MazeOverlay.react';
 import Success from './maze/Success.react';
 import TimeExpired from './maze/TimeExpired.react';
 import Timer from './maze/Timer.react';
+import LevelIndicator from './maze/LevelIndicator.react';
 
 
-import { togglePath } from '../actions/MazeActions';
+import { togglePath, getHint } from '../actions/MazeActions';
 import { createGame, leaveGame } from '../actions/AppActions';
 
 export default React.createClass({
@@ -35,24 +36,28 @@ export default React.createClass({
                             onChange={this._togglePath}
                             checked={maze.get('showPath')} />
                     </div>
-                    <div className="current-level menu-item">
-                        Level {maze.get('position').get(2)+1} of {dimensions.z}
+                    <div className="path-button menu-item">
+                        <button type="button"
+                            onClick={this._getHint}>Hint</button>
                     </div>
                     <div className="timer menu-item">
                         { timer }
                     </div>
                 </div>
                 <div className="maze-section">
-                    <Maze {...this.props} />
+                    <div>
+                        <Maze {...this.props} />
 
-                    <Success gameOver={gameState === 'success'? true : false}
-                    dimensions={dimensions}
-                    dispatch={this.props.dispatch} />
+                        <Success gameOver={gameState === 'success'? true : false}
+                            dimensions={dimensions}
+                            dispatch={this.props.dispatch} />
 
-                    <TimeExpired timeExpired={gameState === 'lost' ? true : false}
-                    dimensions={dimensions}
-                    dispatch={this.props.dispatch} />
-                    {overlay}
+                        <TimeExpired timeExpired={gameState === 'lost' ? true : false}
+                            dimensions={dimensions}
+                            dispatch={this.props.dispatch} />
+                            {overlay}
+                    </div>
+                    <LevelIndicator levels={dimensions.z} level={maze.get('position').get(2)+1} />
                 </div>
                 <div className="controls-section">
                     {controls}
@@ -61,7 +66,10 @@ export default React.createClass({
             );
     },
     _togglePath: function () {
-        this.props.dispatch(togglePath())
+        this.props.dispatch(togglePath());
+    },
+    _getHint: function () {
+        this.props.dispatch(getHint());
     },
     _leaveGame: function () {
         this.props.dispatch(leaveGame());

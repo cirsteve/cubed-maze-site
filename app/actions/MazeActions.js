@@ -24,3 +24,9 @@ export function togglePath () {
         type: 'TOGGLE_PATH'
     };
 }
+
+export function getHint () {
+    return {
+        type: 'GET_HUNT'
+    };    
+}
