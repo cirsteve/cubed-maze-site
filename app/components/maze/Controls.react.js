@@ -49,7 +49,9 @@ export default React.createClass({
             );
     },
     componentDidMount: function () {
-        window.addEventListener('keydown', this._keydown)
+        if (this.props.setEvents) {
+            window.addEventListener('keydown', this._keydown);
+        }
     },
     componentWillUnmount: function () {
         window.removeEventListener('keydown', this._keydown)

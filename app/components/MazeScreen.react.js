@@ -11,7 +11,7 @@ import LevelIndicator from './maze/LevelIndicator.react';
 
 
 import { togglePath, getHint } from '../actions/MazeActions';
-import { createGame, leaveGame } from '../actions/AppActions';
+import { createGame, leaveGame, setInstructions } from '../actions/AppActions';
 
 export default React.createClass({
     render: function () {
@@ -19,7 +19,7 @@ export default React.createClass({
         let gameState = maze.get('gameState');
         let gameOn = gameState === 'inplay';
         let dimensions = this.props.getMaze().get('dimensions').toJS();
-        let controls = gameOn ? <Controls {...this.props}/> : null;
+        let controls = gameOn ? <Controls {...this.props} setEvents={true} /> : null;
         let overlay =  gameState === 'preplay' ? <Overlay  dispatch={this.props.dispatch} /> : null;
         let timer = <Timer level={dimensions.z}
             atGoal={gameState === 'success'}
@@ -31,6 +31,7 @@ export default React.createClass({
                 <div className="menu-group">
                     <FA name="home" onClick={this._leaveGame} />
                     <FA name="refresh" onClick={this._refreshLevel} />
+                    <FA name="question" onClick={this._showInstructions} />
                     <div className="path-button menu-item">
                         Show Path <input type="checkbox"
                             onChange={this._togglePath}
@@ -65,9 +66,6 @@ export default React.createClass({
             </div>
             );
     },
-    _togglePath: function () {
-        this.props.dispatch(togglePath());
-    },
     _getHint: function () {
         this.props.dispatch(getHint());
     },
@@ -76,5 +74,11 @@ export default React.createClass({
     },
     _refreshLevel: function () {
         this.props.dispatch(createGame(this.props.getMaze().get('dimensions').toJS()));
+    },
+    showInstructions: function () {
+
+    },
+    _togglePath: function () {
+        this.props.dispatch(setInstructions(true));
     }
 })

@@ -1,6 +1,6 @@
 import React from 'react';
 import cn from 'classnames';
-import { createMaze } from '../actions/AppActions';
+import { createMaze, setInstructions } from '../actions/AppActions';
 import Menu from './lobby/SinglePlayerMenu.react';
 
 let Item = React.createClass({
@@ -26,7 +26,11 @@ export default React.createClass({
         return (
             <div className={wrapperClass}>
                     <Menu {...this.props} />
+                    <button onClick={this._onInstructions}>How to Play</button>
             </div>
             );
+    },
+    _onInstructions: function () {
+        this.props.dispatch(setInstructions(true));
     }
 })

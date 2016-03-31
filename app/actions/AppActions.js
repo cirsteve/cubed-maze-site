@@ -1,6 +1,12 @@
 import fetch from 'isomorphic-fetch';
 import { mazeCreated } from './EntityActions';
 
+export function setInstructions(show) {
+    return {
+        type: 'SET_INSTRUCTIONS',
+        show
+    };
+}
 export function initGame (id) {
     //exit lobby and enter game play mode
     return {
