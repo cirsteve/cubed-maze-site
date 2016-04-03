@@ -1,4 +1,4 @@
-require('../../../styling/2dcss.less');
+require('../../../styling/3dcss.css');
 import React from 'react';
 import cn from 'classnames';
 import FA from 'react-fontawesome';
@@ -16,12 +16,31 @@ let Marker = React.createClass({
     }
 });
 
+let Wall = React.createClass({
+    render: function () {
+        return (
+            <div className="wall">
+                <div className="front">f</div>
+                <div className="back">b</div>
+                <div className="top">t</div>
+                <div className="bottom">b</div>
+                <div className="left">l</div>
+                <div className="right">r</div>
+            </div>);
+    }
+});
+
 let Node = React.createClass({
     render: function () {
-        let nodeClass = cn({
-            'node': true,
-            'east-wall': this.props.x,
-            'north-wall': this.props.y
+        let eastClass = cn({
+            'wall': true,
+            'east': true,
+            'hide': this.props.x
+        });
+        let northClass = cn({
+            'wall': true,
+            'north': true,
+            'hide': this.props.y
         });
         let ceilingClass = cn({
             'open-ceiling': true,
@@ -38,7 +57,23 @@ let Node = React.createClass({
         let goal = this.props.isGoal ? <FA name="star" size="2x" className="goal-node" /> : null;
 
         return (
-            <div className={nodeClass}>
+            <div className="node">
+                <div className={northClass}>
+                    <div className="front">f</div>
+                    <div className="back">b</div>
+                    <div className="top">t</div>
+                    <div className="bottom">b</div>
+                    <div className="left">l</div>
+                    <div className="right">r</div>
+                </div>
+                <div className={eastClass}>
+                <div className="front">f</div>
+                <div className="back">b</div>
+                <div className="top">t</div>
+                <div className="bottom">b</div>
+                <div className="left">l</div>
+                <div className="right">r</div>
+                </div>
                 <div className={floorClass}></div>
                 <div className={ceilingClass}></div>
                 <div className={pathClass}></div>

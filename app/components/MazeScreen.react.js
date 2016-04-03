@@ -76,7 +76,6 @@ export default React.createClass({
         this.props.dispatch(createGame(this.props.getMaze().get('dimensions').toJS()));
     },
     showInstructions: function () {
-
     },
     _togglePath: function () {
         this.props.dispatch(setInstructions(true));

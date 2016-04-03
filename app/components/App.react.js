@@ -19,8 +19,7 @@ const stateToProps = function (state) {
             let dimensions = maze && maze.get('dimensions');
             return dimensions && [dimensions.get('x')-1, dimensions.get('y')-1, dimensions.get('z')-1];
         },
-        getLevel: function () {
-            let maze = this.getMaze();
+        getLevel: function (maze=this.getMaze()) {
             let level = this.maze.get('position').get(2);
             let walls = maze.get('walls').get(level);
 

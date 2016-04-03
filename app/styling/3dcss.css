@@ -1,0 +1,227 @@
+.maze-3d {
+    position: relative;
+    background-color:blue;
+    width: 500px;
+    height:600px;
+    perspective: 1000;
+}
+
+.maze-section {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.marker{
+    position: absolute;
+    background-color: yellow;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    z-index: 100;
+}
+
+.overlay-wrapper {
+    position: absolute;
+    z-index: 100;
+    background-color: orange;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    padding-top: 30%;
+    text-align: center;
+    font-size: 2em;
+}
+
+.maze-wrapper {
+    background-color: brown;
+}
+
+.maze-wrapper.game-over {
+    opacity: 0.5;
+}
+
+.column {
+    width: 50px;
+    display: inline-block;
+}
+
+.node {
+    background-color: lightgray;
+    border: 1px solid lightgray;
+    height: 50px;
+    width: 50px;
+    box-sizing: border-box;
+    display: flex;
+    position: relative;
+}
+
+.wall {
+    transform-style: preserve-3d;
+    background-color: blue;
+    box-sizing: border-box;
+    border: 1px solid black;
+    position: aboslute;
+}
+
+#box figure {
+  display: block;
+  position: absolute;
+  border: 2px solid black;
+}
+
+.east {
+    right: 0;
+    width: 10px;
+    height: 50px;
+}
+
+.north {
+    top: 0;
+    width: 50px;
+    height: 10px;
+}
+
+.east div, .north div {
+    position: absolute;
+}
+
+.east .back,
+.east .front {
+    width: 100%;
+    height: 100%;
+}
+
+.east .left,
+.east .right {
+    width: 10px;
+    height: 50px;
+    left: 20px;
+}
+
+.east .top,
+.east .bottom {
+    width: 10px;
+    height: 50px;
+    top: 20px;
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+.front {
+    transform: rotateY(0deg);
+}
+
+.right {
+    transform: rotateY(90deg);
+}
+
+.left {
+    transform: rotateY(-90deg);
+}
+
+.top {
+    transform: rotateY(90deg);
+}
+
+.bottom {
+    transform: rotateY(-90deg);
+}
+
+.east .back {
+	transform: translateZ(-100px) rotateY(180deg);
+}
+
+.east .right {
+	transform: rotateY(-270deg) translateX(50px);
+	transform-origin: top right;
+}
+.east .left {
+	transform: rotateY(270deg) translateX(-50px);
+	transform-origin: center left;
+}
+.east .top {
+	transform: rotateX(-90deg) translateY(-50px);
+	transform-origin: top center;
+}
+.east .bottom {
+	transform: rotateX(90deg) translateY(50px);
+	transform-origin: bottom center;
+}
+.east .front {
+	transform: translateZ(50px);
+}
+
+.goal {
+    background-color: orange;
+}
+
+.goal-node {
+    position: absolute;
+    color: orange;
+    top: 15%;
+    left: 15%;
+}
+
+.open-ceiling {
+    position: absolute;
+    top: 0;
+    right: 50%;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid blue;
+}
+
+.open-floor {
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 0;
+    right: 50%;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid black;
+}
+
+.path {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid orange;
+}
+
+.level-indicator-wrapper {
+    width: 10%;
+    text-align: center;
+}
+.level-indicator {
+    font-size: 3em;
+}
+.level-indicator > div {
+    position: relative;
+    border-top: 2px solid black;
+}
+
+.level-indicator .current{
+    position: absolute;
+    background-color: yellow;
+    opacity: 0.6;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    z-index: 50;
+    top: 15%;
+    left: 10%;
+}
+.level-indicator .goal-node {
+    z-index:-1;
+}
