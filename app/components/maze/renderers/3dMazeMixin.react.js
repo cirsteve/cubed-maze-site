@@ -1,5 +1,7 @@
 import React from 'react';
-import { updatePostion } from '../../../actions/MazeActions';
+import ReactDOM from 'react-dom';
+import THREE from 'three';
+import { updatePosition } from '../../../actions/MazeActions';
 
 export default React.createClass({
     UNIT_LENGTH: 30,
@@ -8,6 +10,7 @@ export default React.createClass({
     MARKER_FLR: 21,
     MARKER_ANIMATE_UP: true,
     componentDidMount: function () {
+        this.createScene();
         document.addEventListener("keydown",this.props.dispatch(updatePosition), false);
     },
     createScene: function () {
@@ -28,6 +31,8 @@ export default React.createClass({
 
         var rightPointLight =
               new THREE.PointLight(0xFFFFFF);
+
+        var position = this.props.maze.get('position').toJS();
 
         // set its position
          rightPointLight.position.x = width;
@@ -64,7 +69,7 @@ export default React.createClass({
         this.addWalls(scene);
         this.addBorder(scene, width, height);
         this.addGridLines(scene);
-        this.marker = this.createMarker([this.props.app.position.x, this.props.app.position.y])
+        this.marker = this.createMarker([position.x, position.y])
         scene.add(this.marker);
 
         camera.position.z = 100;
@@ -77,7 +82,7 @@ export default React.createClass({
         renderer.setClearColor( 0x555555 );
 
         //replace or append the rendered scene
-        var sceneNodeParent = React.findDOMNode(targetEl);
+        var sceneNodeParent = ReactDOM.findDOMNode(targetEl);
         var sceneNode = sceneNodeParent.firstChild;
         if (this.props.app.newLevel) {
             if (sceneNode) sceneNodeParent.removeChild(sceneNode);
@@ -141,6 +146,9 @@ export default React.createClass({
         return this.marker;
 
     },
+    updateMarker: function () {
+
+    },
     createOpenFloor: function (coords) {
         var ul = this.UNIT_LENGTH;
         var geometry = new THREE.CircleGeometry( 6, 32 );
@@ -183,7 +191,7 @@ export default React.createClass({
         marker.translateZ(z);
     },
     addBorder: function (scene, width, height){
-        var config = this.props.app.config;
+        var config = this.props.getMaze().get('dimensions').toJS();
         var ul = this.UNIT_LENGTH;
         var planeGeometry = new THREE.BoxGeometry( ul * config.x, ul * config.y, 20);
         var planeMaterial = new THREE.MeshBasicMaterial({color:0xcccccc});
@@ -211,7 +219,7 @@ export default React.createClass({
         scene.add( line );
     },
     addGridLines: function (scene) {
-        var config = this.props.app.config;
+        var config = this.props.getMaze().get('dimensions').toJS();
         var ul = this.UNIT_LENGTH;
         var i;
 
@@ -288,7 +296,7 @@ export default React.createClass({
     addWalls: function (scene) {
         //walls is an array x,y,z]
         console.log(this.props.app);
-        var walls = this.props.app.walls;
+        var walls = this.props.getLevel().toJS();
         _.flatten(walls[1], true).forEach(this.addHorizontalWall.bind(this, scene));
         _.flatten(walls[0], true).forEach(this.addVerticalWall.bind(this, scene));
         _.flatten(walls[2], true).forEach(this.addFloorWall.bind(this, scene));

@@ -1,10 +1,10 @@
 import React from 'react';
-import { updatePosition } from '../../actions/MazeActions';
+import { updatePosition } from '../../../actions/MazeActions';
 import Three from 'three';
 import { Scene, Renderer } from 'react-three';
 
 
-var MazeRender = React.createClass({
+export default React.createClass({
     UNIT_LENGTH: 30,
     WALL_DEPTH: 4,
     MARKER_CEIL: 25,
@@ -311,5 +311,3 @@ var MazeRender = React.createClass({
         _.flatten(walls[3], true).forEach(this.addCeilingWall.bind(this, scene));
     }
 });
-
-module.exports = MazeRender;
