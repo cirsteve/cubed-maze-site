@@ -88,7 +88,7 @@ export default React.createClass({
         let dim = maze.get('dimensions');
         let goal = this.props.goal;
         let path = M.path(maze.get('walls').toJS(),
-            this.props.maze.get('position').toJS(),
+            this.props.match.get('position').toJS(),
             goal);
         //iterate over the zf walls
         for (let i=0;i<colCount;i++) {
@@ -98,10 +98,10 @@ export default React.createClass({
             let zcCol =  level[3][i] || [];
             cols.push(<Column key={i}
                 col={[xCol, yCol, zfCol, zcCol]}
-                maze={this.props.maze}
+                maze={this.props.match}
                 path={path}
                 colIndex={i}
-                level={this.props.maze.get('position').get(2)}
+                level={this.props.match.get('position').get(2)}
                 rowCount={rowCount}
                 goal={goal} />);
         }
@@ -109,7 +109,7 @@ export default React.createClass({
         return (
             <div className="maze-2d">
                 {cols}
-                <Marker position={this.props.maze.get('position').toJS()}
+                <Marker position={this.props.match.get('position').toJS()}
                     nodeSize={50} />
             </div>
         )

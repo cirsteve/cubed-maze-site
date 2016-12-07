@@ -57,7 +57,7 @@ export default React.createClass({
         window.removeEventListener('keydown', this._keydown)
     },
     _keydown: function (e) {
-        let current = this.props.maze.get('position').toJS();
+        let current = this.props.match.get('position').toJS();
         let update = moveMap[e.keyCode](current);
         let dim = this.props.getMaze().get('dimensions');
         if (M.evaluate(this.props.getMaze().toJS().walls, current, update)) {

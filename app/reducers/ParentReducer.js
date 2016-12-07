@@ -1,11 +1,11 @@
-import entityReducer from './EntityReducers';
+import mazeReducer from './MazeReducers';
 import appReducer from './AppReducers';
 import configReducer from './ConfigReducers';
-import mazeReducer from './MazeReducers';
+import matchReducer from './MatchReducers';
 
 export default function (state = {}, action) {
     return {
-        entities: entityReducer(state.entities, action),
+        match: matchReducer(state.match, action),
         app: appReducer(state.app, action),
         config: configReducer(state.config, action),
         maze: mazeReducer(state.maze, action)

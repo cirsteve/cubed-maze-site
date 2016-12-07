@@ -32,17 +32,17 @@
     "maze-cube": "^1.0.3",
     "node-uuid": "^1.4.7",
     "pixi": "^0.3.1",
-    "pixi.js": "^3.0.9",
+    "pixi.js": "^3.0.11",
     "progress": "^1.1.8",
-    "react": "^0.14.6",
-    "react-dom": "^0.14.6",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
     "react-fontawesome": "^0.3.3",
     "react-pixi": "^0.7.4",
-    "react-redux": "^4.0.6",
+    "react-redux": "^4.4.5",
     "react-three": "^0.7.5",
-    "redux": "^3.0.5",
-    "redux-logger": "^2.4.0",
-    "redux-thunk": "^1.0.3",
-    "three": "^0.72.0"
+    "redux": "^3.6.0",
+    "redux-logger": "^2.7.4",
+    "redux-thunk": "^2.1.0",
+    "three": "^0.82.1"
   }
 }

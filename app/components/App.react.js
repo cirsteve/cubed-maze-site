@@ -6,13 +6,12 @@ import Maze from './MazeScreen.react';
 
 const stateToProps = function (state) {
     return {
-        entities: state.entities,
+        match: state.match,
         app: state.app,
         config: state.config,
         maze: state.maze,
         getMaze: function() {
-            let id = this.app.get('currentMazeId');
-            return id ? this.entities.get('mazes').get(id) : null;
+            return this.maze.get('maze');
         },
         getGoal: function () {
             let maze = this.getMaze();
@@ -20,7 +19,7 @@ const stateToProps = function (state) {
             return dimensions && [dimensions.get('x')-1, dimensions.get('y')-1, dimensions.get('z')-1];
         },
         getLevel: function (maze=this.getMaze()) {
-            let level = this.maze.get('position').get(2);
+            let level = this.match.get('position').get(2);
             let walls = maze.get('walls').get(level);
 
             //if not the first level get the z walls for the level above
@@ -50,7 +49,7 @@ export const App = React.createClass({
         }
         return (
             <div className="">
-                <div className="-title-wrapper">
+                <div className="title-wrapper">
                     <h2>Cubed Maze</h2>
                 </div>
                 {screenComponent}

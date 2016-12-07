@@ -2,7 +2,7 @@ require('../../styling/maze.less');
 import React from 'react';
 import cn from 'classnames';
 
-import MazeRenderer from './renderers/3dMazeMixin.react';
+import MazeRenderer from './renderers/2dCSS.react';
 
 
 export default React.createClass({

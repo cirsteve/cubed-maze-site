@@ -15,7 +15,7 @@ import { createGame, leaveGame, setInstructions } from '../actions/AppActions';
 
 export default React.createClass({
     render: function () {
-        let maze = this.props.maze;
+        let maze = this.props.match;
         let gameState = maze.get('gameState');
         let gameOn = gameState === 'inplay';
         let dimensions = this.props.getMaze().get('dimensions').toJS();
