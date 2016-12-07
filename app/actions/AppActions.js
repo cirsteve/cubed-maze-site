@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch';
-import { mazeCreated } from './EntityActions';
+import { mazeCreated } from './MazeActions';
+import MC from 'maze-cube';
 
 export function setInstructions(show) {
     return {
@@ -28,7 +29,18 @@ export function getNewMaze(config) {
     };
 }
 
-export function createMaze(config) {
+export function createMaze(config, clientMaze) {
+    //if clientMaze generate the maze here on the client, no need to get the server involved
+    if (clientMaze) {
+        return function (dispatch) {
+            dispatch(mazeCreated({
+                "dimensions": config,
+                "walls": new MC.Maze(config).wallObjsToStrings()
+            }));
+            dispatch(initGame());
+        };
+    }
+
     return function (dispatch) {
         dispatch(getNewMaze(config));
         return fetch('/create',
@@ -43,7 +55,7 @@ export function createMaze(config) {
         .then(response => response.json())
         .then(json => {
             dispatch(mazeCreated(json))
-            dispatch(initGame(json.id))
+            dispatch(initGame())
         });
 
     };

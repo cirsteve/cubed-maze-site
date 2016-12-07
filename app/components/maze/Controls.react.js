@@ -2,7 +2,7 @@ import React from 'react';
 import cn from 'classnames';
 import FA from 'react-fontawesome';
 import M from 'maze-cube';
-import { updatePosition } from '../../actions/MazeActions';
+import { updatePosition } from '../../actions/MatchActions';
 
 const moveMap = {
     37:p=>[p[0]-1, p[1], p[2]],

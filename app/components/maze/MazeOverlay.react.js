@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 
-import { startGame } from '../../actions/MazeActions';
+import { startGame } from '../../actions/MatchActions';
 
 export default React.createClass({
     render: function () {

@@ -1,32 +1,6 @@
-export function startGame (game) {
+export function mazeCreated (maze) {
     return {
-        type: 'START_GAME',
-        game
-    };
-}
-
-export function endGame () {
-    return {
-        type: 'END_GAME'
+        type: 'MAZE_CREATED',
+        maze
     };
 };
-
-export function updatePosition ( position, atGoal ) {
-    return {
-        type: 'UPDATE_POSITION',
-        position,
-        atGoal
-    };
-}
-
-export function togglePath () {
-    return {
-        type: 'TOGGLE_PATH'
-    };
-}
-
-export function getHint () {
-    return {
-        type: 'GET_HUNT'
-    };    
-}

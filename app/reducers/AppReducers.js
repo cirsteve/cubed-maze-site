@@ -5,7 +5,8 @@ const initialState = Map({
     currentMazeId: null,
     screen: 'config',
     showInstructions: false,
-    instructionMaze: new MC.Maze({x:2, y:2, z: 2})
+    instructionMaze: new MC.Maze({x:2, y:2, z: 2}),
+    clientMaze: true
 });
 
 export default function (state = initialState, action) {

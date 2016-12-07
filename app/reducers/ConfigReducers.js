@@ -5,8 +5,7 @@ const initialState = Map(
         x: 10,
         y: 10,
         z: 4,
-        render: '3d',
-        name: null
+        render: '3d'
     }
 );
 

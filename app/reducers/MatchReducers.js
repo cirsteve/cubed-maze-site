@@ -24,8 +24,7 @@ let hintRecord = {
 
 const initialState = fromJS({
     position: [0,0,0],
-    showPath: false,
-    hints: false,
+    hints: Map(),
     gameState: 'preplay'
 });
 
@@ -46,13 +45,12 @@ export default function (state = initialState, action) {
                 return state.set('gameState', 'lost');
         case 'INIT_GAME':
             return state.merge(fromJS({
-                showPath: false,
-                showHint: false,
+                hints: Map(),
                 position: [0,0,0],
                 gameState: 'preplay'
             }));
-        case 'TOGGLE_PATH':
-            return state.set('showPath', !state.get('showPath'));
+        case 'ADD_HINT':
+            return state.set('addHint', !state.get('showPath'));
         default:
             return state;
     }

@@ -19,6 +19,6 @@ export default React.createClass({
     },
     _nextLevel: function() {
         let update = Object.assign(this.props.dimensions, {z:this.props.dimensions.z+1});
-        this.props.dispatch(createMaze(update))
+        this.props.dispatch(createMaze(update, this.props.app.get('clientMaze')));
     }
 });
