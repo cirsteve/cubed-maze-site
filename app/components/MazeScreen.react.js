@@ -52,7 +52,8 @@ export default React.createClass({
 
                         <TimeExpired timeExpired={gameState === 'lost' ? true : false}
                             dimensions={dimensions}
-                            dispatch={this.props.dispatch} />
+                            dispatch={this.props.dispatch}
+                            app={this.props.app} />
                             {overlay}
                     </div>
                     <LevelIndicator levels={dimensions.z} level={maze.get('position').get(2)+1} />
@@ -64,12 +65,23 @@ export default React.createClass({
             );
     },
     _addHint: function () {
+        //the orientation of the graph is flipped on the client
+        //so boundaries coming from the server must be translated
+        let CLIENT_BOUNDARY_MAP = {
+            'up': 'down',
+            'down': 'up',
+            'east': 'west',
+            'west': 'east',
+            'north': 'north',
+            'south': 'south'
+        };
+
         let currentNode = this.props.match.get('position').toJS();
         let path = MC.path(this.props.maze.get('maze').get('walls').toJS(), currentNode, this.props.getGoal())
-        let current = MC.padPosition(path[path.length-1].join(''))
-        let next = MC.padPosition(path[path.length-2].join(''))
-        let delta = current - next + 100; //add 100 to the delta so there are no negative values
-        this.props.dispatch(addHint(current, delta));
+        let current = path[path.length-1]
+        let next = path[path.length-2]
+        let boundary = MC.getBoundary(current, next);
+        this.props.dispatch(addHint(current.join(''), CLIENT_BOUNDARY_MAP[boundary]));
     },
     _leaveGame: function () {
         this.props.dispatch(leaveGame());

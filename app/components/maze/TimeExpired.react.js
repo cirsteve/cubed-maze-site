@@ -18,6 +18,6 @@ export default React.createClass({
         );
     },
     _retryLevel: function() {
-        this.props.dispatch(createMaze(this.props.dimensions))
+        this.props.dispatch(createMaze(this.props.dimensions, this.props.app.get('clientMaze')))
     }
 });

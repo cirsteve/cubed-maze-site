@@ -6,15 +6,11 @@ export default React.createClass({
 
         return (
             <div className="single-menu">
-                <h4>Choose a level below</h4>
-                <button className="easy" onClick={this._onEasy}>Easy</button>
-                <button className="medium" onClick={this._onMedium}>Medium</button>
+                <h4>Choose difficulty level below</h4>
+                <button className="medium" onClick={this._onMedium}>Regular</button>
                 <button className="hard" onClick={this._onHard}>Hard</button>
             </div>
             );
-    },
-    _onEasy: function () {
-        this.props.dispatch(createMaze({x:4, y:4, z:2}, this.props.app.get('clientMaze')));
     },
     _onMedium: function () {
         this.props.dispatch(createMaze({x:7, y:7, z:2}, this.props.app.get('clientMaze')));
