@@ -3,6 +3,7 @@ import cn from 'classnames';
 
 import Controls from './maze/Controls.react'
 import MazeRenderer from './maze/renderers/2dCSS.react';
+import { updateScreen } from '../actions/AppActions';
 
 
 export default React.createClass({
@@ -13,6 +14,7 @@ export default React.createClass({
         //let controls = this.props.showDemo ?
         return (
             <div className={wrapperClass}>
+                <button onClick={this._onBack}>Back to Lobby</button>
                 <p>Maze Cube is a multi dimensional maze game where the objective is to find the path through a maze before the timer runs out</p>
                 <p>You can navigate the maze through keyboard controls:</p>
                     <Controls maze={this.props.app.get('instructionMaze')} />
@@ -25,5 +27,8 @@ export default React.createClass({
                     currentMaze={this.props.app.get('instructionMaze')} />
             </div>
             );
+    },
+    _onBack: function (e) {
+        this.props.dispatch(updateScreen('lobby'));
     }
 })

@@ -1,8 +1,26 @@
-require('../styling/app.less');
 import React from 'react';
 import { connect } from 'react-redux';
 import Lobby from './LobbyScreen.react';
 import Maze from './MazeScreen.react';
+import Instruction from './InstructionScreen.react';
+
+let appStyle = {
+    width: '400px',
+    height: '600px',
+    margin: 'auto',
+    backgroundColor: 'slategray'
+};
+
+let titleStyle = {
+    display: 'flex',
+    justifyContent: 'center'
+};
+
+let mazeSection = {
+    width: '100%',
+    height: '100%'
+};
+
 
 const stateToProps = function (state) {
     return {
@@ -44,13 +62,16 @@ export const App = React.createClass({
             case 'maze':
                 screenComponent = <Maze {...this.props} />;
                 break;
+            case 'instruction':
+                screenComponent = <Instruction {...this.props} />;
+                break;
             default:
                 screenComponent = <Lobby {...this.props} />;
         }
         return (
-            <div className="">
-                <div className="title-wrapper">
-                    <h2>Cubed Maze</h2>
+            <div style={appStyle}>
+                <div style={titleStyle}>
+                    <h2>Maze Cubed</h2>
                 </div>
                 {screenComponent}
             </div>

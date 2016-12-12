@@ -2,10 +2,14 @@ import React from 'react';
 import cn from 'classnames';
 import FA from 'react-fontawesome';
 
+import { getStyle } from '../../utilities';
+import mazeStyle from '../../styling/maze';
+
 let Level = React.createClass({
     render: function () {
-        let current = this.props.isCurrentLevel ? <div className="current"></div> : null;
-        let goal = this.props.isMaxLevel ? <FA name="star" className="goal-node" /> : null;
+        let current = this.props.isCurrentLevel ?
+            <div style={mazeStyle.levelIndicator}></div> : null;
+        let goal = this.props.isMaxLevel ? <FA name="star" style={mazeStyle.goalLevel} /> : null;
         return (
             <div>
                 {this.props.level}
@@ -27,8 +31,8 @@ export default React.createClass({
             i++;
         }
         return (
-            <div className="level-indicator-wrapper">
-                <div className="current-level">
+            <div style={mazeStyle.levelIndicatorWrapper}>
+                <div style={mazeStyle.currentLevelIndicator}>
                     <div>
                         Level
                     </div>
@@ -36,7 +40,7 @@ export default React.createClass({
                         {this.props.level}/{this.props.levels}
                     </div>
                 </div>
-                <div className="level-indicator">
+                <div style={mazeStyle.levelIndicator}>
                     {levels}
                 </div>
             </div>

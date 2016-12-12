@@ -14,6 +14,16 @@ import LevelIndicator from './maze/LevelIndicator.react';
 import { addHint } from '../actions/MatchActions';
 import { createGame, leaveGame, setInstructions } from '../actions/AppActions';
 
+let menuStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '2px'
+}
+
+let screenStyle = {
+    position: 'relative',
+}
+
 export default React.createClass({
     render: function () {
         let maze = this.props.match;
@@ -28,8 +38,8 @@ export default React.createClass({
             preplay={gameState ==='preplay' ?true:false}
             dispatch={this.props.dispatch} />;
         return (
-            <div className="maze-screen">
-                <div className="menu-group">
+            <div style={screenStyle}>
+                <div style={menuStyle}>
                     <FA name="home" onClick={this._leaveGame} />
                     <FA name="refresh" onClick={this._refreshLevel} />
                     <FA name="question" onClick={this._showInstructions} />
@@ -87,7 +97,7 @@ export default React.createClass({
         this.props.dispatch(leaveGame());
     },
     _refreshLevel: function () {
-        this.props.dispatch(createGame(this.props.getMaze().get('dimensions').toJS()));
+        this.props.dispatch(createGame(this.props.getMaze().get('dimensions').toJS(), this.props.app.get('clientMaze')));
     },
     showInstructions: function () {
     },

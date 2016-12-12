@@ -2,15 +2,18 @@ import React from 'react';
 import cn from 'classnames';
 
 import { createMaze } from '../../actions/AppActions';
+import { getStyle } from '../../utilities';
+import mazeStyle from '../../styling/maze';
 
 export default React.createClass({
     render: function () {
-        let wrapperClass = cn({
-            'success-message': true,
-            'hide': !this.props.gameOver
-        });
+        let wrapper = getStyle([
+            [mazeStyle.completionMessage, true],
+            [mazeStyle.successMessage, true],
+            [{display: 'none'}, !this.props.gameOver]
+        ]);
         return (
-            <div className={wrapperClass}>
+            <div style={wrapper}>
                 <h3>You did it!</h3>
                 <h4>Can you go higher?</h4>
                 <button onClick={this._nextLevel}>Next Level</button>

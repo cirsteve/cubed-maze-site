@@ -3,6 +3,7 @@ import cn from 'classnames';
 import FA from 'react-fontawesome';
 import M from 'maze-cube';
 import { updatePosition } from '../../actions/MatchActions';
+import mazeStyle from '../../styling/maze'
 
 const moveMap = {
     37:p=>[p[0]-1, p[1], p[2]],
@@ -15,15 +16,20 @@ const moveMap = {
 
 export default React.createClass({
     render: function () {
+        let centerStyle = {
+            display: 'flex',
+            justifyContent: 'space-between'
+        }
+
         return (
-            <div className="controls-group">
-                <div className="direction-controls">
+            <div style={mazeStyle.controlsGroup}>
+                <div style={mazeStyle.directionControls}>
                     <div>
                         <div>
                             <FA name="arrow-up" size="2x" />
                         </div>
                     </div>
-                    <div className="center">
+                    <div style={centerStyle}>
                         <div>
                             <FA name="arrow-left" size="2x" />
                         </div>
@@ -37,7 +43,7 @@ export default React.createClass({
                         </div>
                     </div>
                 </div>
-                <div className="level-controls">
+                <div style={mazeStyle.levelControls}>
                     <div>
                         Level + w
                     </div>

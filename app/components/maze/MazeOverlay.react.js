@@ -2,25 +2,26 @@ import React from 'react';
 import cn from 'classnames';
 
 import { startGame } from '../../actions/MatchActions';
+import { getStyle } from '../../utilities';
+import mazeStyle from '../../styling/maze';
 
 export default React.createClass({
     render: function () {
-        let wrapperClass = cn({
-            'overlay-wrapper': true
-        });
         let buttonClass= cn({
             'hide': this.state.start
         });
-        let countClass = cn({
-            'overlay-count': true,
-            'hide': !this.state.start
-        });
+        let countStyle = getStyle([
+            [{display: 'none'}, !this.state.start]
+        ]);
+        let buttonStyle = getStyle([
+            [{display: 'none'}, this.state.start]
+        ]);
         return (
-            <div className={wrapperClass}>
-                <div className={countClass}>
+            <div style={mazeStyle.overlay}>
+                <div style={countStyle}>
                     {this.state.count}
                 </div>
-                <button className={buttonClass} onClick={this._startCountdown}>Start</button>
+                <button style={buttonStyle} onClick={this._startCountdown}>Start</button>
             </div>
         );
     },

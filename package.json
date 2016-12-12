@@ -27,7 +27,6 @@
     "express": "^4.13.4",
     "immutable": "^3.7.6",
     "isomorphic-fetch": "^2.2.1",
-    "less": "^2.6.1",
     "lodash": "^4.0.0",
     "maze-cube": "^1.1.1",
     "node-uuid": "^1.4.7",
@@ -37,12 +36,11 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-fontawesome": "^0.3.3",
-    "react-pixi": "^0.7.4",
     "react-redux": "^4.4.5",
-    "react-three": "^0.7.5",
     "redux": "^3.6.0",
     "redux-logger": "^2.7.4",
     "redux-thunk": "^2.1.0",
-    "three": "^0.82.1"
+    "three": "^0.82.1",
+    "tinycolor2": "^1.4.1"
   }
 }

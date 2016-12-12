@@ -1,47 +1,49 @@
-require('../../../styling/2dcss.less');
+import mazeStyle from '../../../styling/2dcss.js';
 import React from 'react';
 import cn from 'classnames';
 import FA from 'react-fontawesome';
-
 import M from 'maze-cube';
+
+import { getStyle } from '../../../utilities';
 
 let Marker = React.createClass({
     render: function () {
         let ns = this.props.nodeSize;
-        let styles = {
+        let styles = Object.assign({}, mazeStyle.marker, {
             left: this.props.position[0] * ns + (ns/4),
             bottom: this.props.position[1] * ns + (ns/4)
-        };
-        return (<div className="marker" style={styles}></div>);
+        });
+        return (<div style={styles}></div>);
     }
 });
 
 let Node = React.createClass({
     render: function () {
-        let nodeClass = cn({
-            'node': true,
-            'east-wall': this.props.x,
-            'north-wall': this.props.y
-        });
-        let ceilingClass = cn({
-            'open-ceiling': true,
-            'hide': this.props.zc
-        });
-        let floorClass = cn ({
-            'open-floor': true,
-            'hide': this.props.zf
-        });
-        let pathClass = cn ({
-            'path': true,
-            'hide': !this.props.inPath
-        });
-        let goal = this.props.isGoal ? <FA name="star" size="2x" className="goal-node" /> : null;
+        let nodeStyle = getStyle([
+            [mazeStyle.node, true],
+            [mazeStyle.eastWall, this.props.x],
+            [mazeStyle.northWall, this.props.y]
+        ]);
+        let ceilingStyle = getStyle([
+            [mazeStyle.openCeiling, true],
+            [{display: 'none'}, this.props.zc]
+        ]);
+        let floorStyle = getStyle([
+            [mazeStyle.openFloor, true],
+            [{display: 'none'}, this.props.zf]
+        ]);
+        let hintStyle = getStyle([
+            [mazeStyle.hint, true],
+            'hide', !this.props.inPath
+        ]);
+        let goal = this.props.isGoal ? <FA name="star" size="2x" style={mazeStyle.goal} /> : null;
+        let hint = this.props.hint ? <FA name="arrow-down" /> : null;
 
         return (
-            <div className={nodeClass}>
-                <div className={floorClass}></div>
-                <div className={ceilingClass}></div>
-                <div className={pathClass}></div>
+            <div style={nodeStyle}>
+                <div style={mazeStyle.openFloor}></div>
+                <div style={mazeStyle.openCeiling}></div>
+                {hint}
                 {goal}
             </div>);
     }
@@ -70,7 +72,7 @@ let Column = React.createClass({
                 isGoal={coords === this.props.goal.join('') ? true : false} />);
         };
         return (
-            <div className="column">
+            <div style={mazeStyle.column}>
                 {nodes}
             </div>
         )
@@ -107,7 +109,7 @@ export default React.createClass({
         }
 
         return (
-            <div className="maze-2d">
+            <div style={mazeStyle.maze}>
                 {cols}
                 <Marker position={this.props.match.get('position').toJS()}
                     nodeSize={50} />

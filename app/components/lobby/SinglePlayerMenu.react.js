@@ -13,9 +13,9 @@ export default React.createClass({
             );
     },
     _onMedium: function () {
-        this.props.dispatch(createMaze({x:7, y:7, z:2}, this.props.app.get('clientMaze')));
+        this.props.dispatch(createMaze({x:6, y:6, z:2}, this.props.app.get('clientMaze')));
     },
     _onHard: function () {
-        this.props.dispatch(createMaze({x:10, y:10, z:2}, this.props.app.get('clientMaze')));
+        this.props.dispatch(createMaze({x:8, y:8, z:2}, this.props.app.get('clientMaze')));
     },
 });

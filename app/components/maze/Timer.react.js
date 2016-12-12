@@ -2,17 +2,14 @@ import React from 'react';
 import cn from 'classnames';
 
 import { endGame } from '../../actions/MatchActions';
+import { getStyle } from '../../utilities';
+import mazeStyle from '../../styling/maze';
 
 export default React.createClass({
     render: function () {
-        let wrapperClass = cn({
-            'game-countdown': true,
-            'time-over': !this.state.timeLeft === 0,
-            'gameOn': this.props.gameOn,
-            'atGoal': this.props.atGoal
-        });
+
         return (
-            <div className={wrapperClass}>
+            <div>
                 {this.state.minutes}:{this.state.seconds<10?0:''}{this.state.seconds}
             </div>
         );
@@ -20,11 +17,6 @@ export default React.createClass({
     getInitialState: function () {
         return this.getMaxTime();
     },
-    /**
-    componentDidMount: function () {
-        this.interval = setInterval(this.updateTimer, 1000);
-    },
-    **/
     componentWillUnmount: function () {
         this.stopTimer();
     },

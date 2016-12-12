@@ -2,10 +2,10 @@ import fetch from 'isomorphic-fetch';
 import { mazeCreated } from './MazeActions';
 import MC from 'maze-cube';
 
-export function setInstructions(show) {
+export function updateScreen(screen) {
     return {
-        type: 'SET_INSTRUCTIONS',
-        show
+        type: 'UPDATE_SCREEN',
+        screen
     };
 }
 export function initGame (id) {
