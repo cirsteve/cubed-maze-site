@@ -1,15 +1,17 @@
 import { colors } from "./variables";
 
 export default {
-    maze:{
-        position: 'relative',
-        backgroundColor: 'blue'
-    },
-    mazeSection: {
+    maze: {
         position: 'relative',
         display: 'flex',
-        justifyContent: 'center',
+        backgroundColor: 'darkgray'
     },
+
+    column: {
+        width: '50px',
+        display: 'inline-block',
+    },
+
     marker: {
         position: 'absolute',
         backgroundColor: 'yellow',
@@ -19,17 +21,8 @@ export default {
         zIndex: '100',
     },
 
-    mazeWrapper: {
-        backgroundColor: colors.brown
-    },
-
     gameOver: {
         opacity: '0.5'
-    },
-
-    column: {
-        width: '50px',
-        display: 'inline-block'
     },
 
     node: {
@@ -37,8 +30,8 @@ export default {
         border: '1px solid lightgray',
         height: '50px',
         width: '50px',
-        boxsizing: 'border-box',
-        display: 'flex',
+        boxSizing: 'border-box',
+        flex: '1',
         position: 'relative',
     },
 

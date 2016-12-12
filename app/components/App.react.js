@@ -28,6 +28,9 @@ const stateToProps = function (state) {
         app: state.app,
         config: state.config,
         maze: state.maze,
+        getPositionString: function () {
+            return this.match.get('position').toJS().join('');
+        },
         getMaze: function() {
             return this.maze.get('maze');
         },

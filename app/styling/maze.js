@@ -16,8 +16,7 @@ export default {
     },
     controlGroup: {
         display: 'flex',
-        flexDirection: 'row-reverse',
-        justifyContent: 'space-around'
+        justifyContent: 'space-between'
     },
 
     levelControls: {
@@ -32,35 +31,8 @@ export default {
         width: '20%',
     },
 
-    levelIndicatorWrapper: {
-        width: '10%',
-        textAlign: 'center'
-    },
-
     levelIndicator: {
-        fontSize: '3em',
-        position: 'relative',
-        borderTop: `2px solid ${colors.black}`,
-    },
-
-
-    goalLevel: {
-        position: 'absolute',
-        color: colors.orange,
-        top: '15%',
-        left: '15%',
-    },
-
-    currentLevelIndicator: {
-        position: 'absolute',
-        backgroundColor: 'yellow',
-        opacity: '0.6',
-        borderRadius: '50%',
-        width: '40px',
-        height: '40px',
-        zIndex: '50',
-        top: '15%',
-        left: '10%',
+        fontSize: '0.9em',
     },
 
     completionMessage: {

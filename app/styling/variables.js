@@ -9,5 +9,5 @@ let baseColors = {
 export const colors = Object.assign({
     success: baseColors.orange,
     fail: baseColors.blue,
-    hint: 'green'
+    hint: 'yellowgreen'
 }, baseColors);

@@ -19,6 +19,8 @@ let Marker = React.createClass({
 
 let Node = React.createClass({
     render: function () {
+        let hint = this.props.hint;
+
         let nodeStyle = getStyle([
             [mazeStyle.node, true],
             [mazeStyle.eastWall, this.props.x],
@@ -26,24 +28,29 @@ let Node = React.createClass({
         ]);
         let ceilingStyle = getStyle([
             [mazeStyle.openCeiling, true],
-            [{display: 'none'}, this.props.zc]
+            [{display: 'none'}, this.props.zc],
+            [{borderBottomColor: 'yellowgreen'}, hint && hint === 'up']
         ]);
         let floorStyle = getStyle([
             [mazeStyle.openFloor, true],
-            [{display: 'none'}, this.props.zf]
+            [{display: 'none'}, this.props.zf],
+            [{borderBottomColor: 'yellowgreen'}, hint && hint === 'down']
         ]);
         let hintStyle = getStyle([
-            [mazeStyle.hint, true],
-            'hide', !this.props.inPath
+            [{display: 'none', color: 'yellowgreen'}, true],
+            [{display: 'flex', justifyContent: 'center', transform: 'rotate(180deg'}, hint && hint === 'north'],
+            [{display: 'flex', transform: 'rotate(270deg)'}, hint && hint === 'east'],
+            [{display: 'flex', transform: 'rotate(90deg)'}, hint && hint === 'west'],
+            [{display: 'flex', justifyContent: 'center'}, hint && hint === 'south'],
         ]);
         let goal = this.props.isGoal ? <FA name="star" size="2x" style={mazeStyle.goal} /> : null;
-        let hint = this.props.hint ? <FA name="arrow-down" /> : null;
+
 
         return (
             <div style={nodeStyle}>
-                <div style={mazeStyle.openFloor}></div>
-                <div style={mazeStyle.openCeiling}></div>
-                {hint}
+                <div style={ceilingStyle}></div>
+                <div style={floorStyle}></div>
+                <FA name="arrow-down" style={hintStyle} />
                 {goal}
             </div>);
     }
@@ -59,16 +66,13 @@ let Column = React.createClass({
             let y = col[1][i] && col[1][i] === '1';
             let zc = col[2][i] ? col[2][i] === '1' : true;
             let zf = col[3][i] ? col[3][i] === '1' : true;
-            coords = ''+this.props.colIndex+i+this.props.level
-            path = this.props.maze.get('showPath') &&
-                this.props.path.map(p=>p.join(''))
-                .includes(coords)
+            coords = ''+this.props.colIndex+i+this.props.currentLevel
             nodes.unshift(<Node key={i}
                 x={x}
                 y={y}
                 zf={zf}
                 zc={zc}
-                inPath={path}
+                hint={this.props.hints[coords]}
                 isGoal={coords === this.props.goal.join('') ? true : false} />);
         };
         return (
@@ -98,13 +102,15 @@ export default React.createClass({
             let yCol =  level[1][i] || [];
             let zfCol =  level[2][i] || [];
             let zcCol =  level[3][i] || [];
+            let currentLevel = this.props.match.get('position').get(2);
             cols.push(<Column key={i}
                 col={[xCol, yCol, zfCol, zcCol]}
-                maze={this.props.match}
+                MatchActions={this.props.match}
                 path={path}
                 colIndex={i}
-                level={this.props.match.get('position').get(2)}
+                currentLevel={currentLevel}
                 rowCount={rowCount}
+                hints={this.props.match.get('hints')}
                 goal={goal} />);
         }
 

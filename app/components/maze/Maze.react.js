@@ -12,8 +12,9 @@ export default React.createClass({
             level={this.props.getLevel()}
             currentMaze={this.props.getMaze()}
             goal={this.props.getGoal()} />;
+        let width = `${this.props.dimensions.x * 50}px`;
         let wrapperStyle = getStyle([
-            [mazeStyle.mazeWrapper, true],
+            [{width:width,margin: 'auto'}, true],
             [mazeStyle.gameOver, maze.get('gameState') === 'success' || maze.get('gameState') === 'lost']
         ]);
 
