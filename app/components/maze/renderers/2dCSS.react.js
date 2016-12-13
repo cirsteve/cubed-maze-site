@@ -34,23 +34,33 @@ let Node = React.createClass({
         let floorStyle = getStyle([
             [mazeStyle.openFloor, true],
             [{display: 'none'}, this.props.zf],
-            [{borderBottomColor: 'yellowgreen'}, hint && hint === 'down']
+            [{borderTopColor: 'yellowgreen'}, hint && hint === 'down']
         ]);
         let hintStyle = getStyle([
-            [{display: 'none', color: 'yellowgreen'}, true],
-            [{display: 'flex', justifyContent: 'center', transform: 'rotate(180deg'}, hint && hint === 'north'],
-            [{display: 'flex', transform: 'rotate(270deg)'}, hint && hint === 'east'],
-            [{display: 'flex', transform: 'rotate(90deg)'}, hint && hint === 'west'],
-            [{display: 'flex', justifyContent: 'center'}, hint && hint === 'south'],
+            [{display: 'none', color: 'yellowgreen', height: '100%'}, true],
+            [{display: 'flex', justifyContent: 'center'}, hint && hint === 'north'],
+            [{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}, hint && hint === 'east'],
+            [{display: 'flex', alignItems: 'center'}, hint && hint === 'west'],
+            [{display: 'flex', justifyContent: 'center', alignItems: 'flex-end'}, hint && hint === 'south'],
         ]);
+
         let goal = this.props.isGoal ? <FA name="star" size="2x" style={mazeStyle.goal} /> : null;
+        let hintIconMap = {
+            north: 'arrow-up',
+            south: 'arrow-down',
+            east: 'arrow-right',
+            west: 'arrow-left'
+        };
+        let hintIcon = hintIconMap[hint] || 'nothing';
 
 
         return (
             <div style={nodeStyle}>
                 <div style={ceilingStyle}></div>
                 <div style={floorStyle}></div>
-                <FA name="arrow-down" style={hintStyle} />
+                <div style={hintStyle}>
+                <FA name={hintIcon} />
+                </div>
                 {goal}
             </div>);
     }
@@ -72,7 +82,7 @@ let Column = React.createClass({
                 y={y}
                 zf={zf}
                 zc={zc}
-                hint={this.props.hints[coords]}
+                hint={this.props.hints.get(coords)}
                 isGoal={coords === this.props.goal.join('') ? true : false} />);
         };
         return (

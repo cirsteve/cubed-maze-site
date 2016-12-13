@@ -52,6 +52,6 @@ export default React.createClass({
     getMaxTime: function (level) {
         //returns the total seconds for each level
         level = level || this.props.level;
-        return this.getTime(level * 60);
+        return this.getTime((level-1) * 60);
     }
 });

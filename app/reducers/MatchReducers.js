@@ -50,9 +50,7 @@ export default function (state = initialState, action) {
                 gameState: 'preplay'
             }));
         case 'ADD_HINT':
-            let hint = {}
-            hint[action.coords] = action.direction;
-            return state.setIn(['hints'], hint);
+            return state.setIn(['hints', action.coords], action.direction);
         default:
             return state;
     }

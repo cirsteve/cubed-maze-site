@@ -94,7 +94,7 @@ export default React.createClass({
                 <LevelControls />
                 <div>
                     <button type="button"
-                        onClick={this._addHint}>Hint</button>
+                        onClick={this._addHint}>Get Hint</button>
                     <LevelIndicator levels={this.props.maxLevels} level={this.props.level} />
                 </div>
                 <DirectionControls />
