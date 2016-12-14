@@ -14,8 +14,8 @@ export default React.createClass({
         ]);
         return (
             <div style={wrapper}>
-                <h3>Time is up!</h3>
-                <h4>Give it another shot?</h4>
+                <h2>Time is up!</h2>
+                <h3>But do not give up yet, you can do it!</h3>
                 <button onClick={this._retryLevel}>Retry Level</button>
             </div>
         );

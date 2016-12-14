@@ -38,13 +38,12 @@ export default {
     completionMessage: {
         position: 'absolute',
         zIndex: '100',
-        height: '60%',
+        height: '80%',
         width: '60%',
         top: '10%',
         left: '20%',
         padding: '5px',
         textAlign: 'center',
-        fontSize: '2em',
         color: 'white',
     },
 
