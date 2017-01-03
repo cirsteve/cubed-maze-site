@@ -1,38 +1,92 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import THREE from 'three';
-import { updatePosition } from '../../../actions/MazeActions';
+import {Scene, PerspectiveCamera, SpotLight, PointLight,
+    AxisHelper, GridHelper, WebGLRenderer, BoxGeometry, MeshPhongMaterial,
+    CircleGeometry, LineBasicMaterial, SphereGeometry, Vector3,
+    Geometry, Line, MeshBasicMaterial, CylinderGeometry, Mesh} from 'three';
+import { updatePosition} from '../../../actions/MatchActions';
 
 export default React.createClass({
-    UNIT_LENGTH: 30,
-    WALL_DEPTH: 4,
-    MARKER_CEIL: 25,
-    MARKER_FLR: 21,
+    UNIT_LENGTH: 5,
+    WALL_DEPTH: 1,
+    MARKER_CEIL: 4,
+    MARKER_FLR: 1,
     MARKER_ANIMATE_UP: true,
+    COLORS: {
+        wall: 0x0080ab,
+        ceiling: 0x808000,
+        floor: 0x8080ab,
+        marker: 0xaaaaaa
+    },
     componentDidMount: function () {
         this.createScene();
         document.addEventListener("keydown",this.props.dispatch(updatePosition), false);
     },
+    initObjects: function () {
+        //create the objects needs for threejs
+        this.wall = this.initWall();
+        this.floor = this.initFloor();
+        this.ceiling = this.initCeiling();
+        this.marker = this.initMarker();
+    },
+    initWall: function () {
+        let ul = this.UNIT_LENGTH
+        let geometry = new BoxGeometry( ul, ul/2, ul/10  );
+        let material = new MeshPhongMaterial( { color: this.COLORS.wall } );
+
+        material.opacity = 0.9;
+        material.transparent = true;
+
+        let cube = new Mesh( geometry, material );
+        return cube;
+    },
+    initFloor: function () {
+        let ul = this.UNIT_LENGTH
+        let geometry = new BoxGeometry( ul, ul/5, ul );
+        let material = new MeshPhongMaterial( { color: this.COLORS.floor } );
+
+        material.opacity = 0.9;
+        material.transparent = true;
+
+        return new Mesh( geometry, material );
+    },
+    initCeiling: function () {
+        let ul = this.UNIT_LENGTH
+        let geometry = new BoxGeometry( ul, ul/5, ul );
+        let material = new MeshPhongMaterial( { color: this.COLORS.ceiling } );
+
+        material.opacity = 0.9;
+        material.transparent = true;
+
+        return new Mesh( geometry, material );
+    },
+    initMarker: function () {
+        var ul = this.UNIT_LENGTH;
+        var sphereGeometry = new SphereGeometry( ul/2, ul*0.8, ul*0.8 );
+        var sphereMaterial = new MeshPhongMaterial( {color: this.COLORS.marker } );
+        let marker = new Mesh( sphereGeometry, sphereMaterial );
+        marker.castShadow = true;
+        return marker;
+    },
     createScene: function () {
-        var scene = new THREE.Scene();
+        var scene = new Scene();
         var targetEl = this.refs.mazeTarget;
 
         var unitLength = this.UNIT_LENGTH;
 
-        var width = 600;
-        var height = 600;
+        var width = 300;
+        var height = 400;
 
-        var camera = new THREE.PerspectiveCamera(130, width/ height, 0.1, 1500 );
         var pointLight =
-              new THREE.SpotLight(0xFFFFFF);
+              new SpotLight(0xFFFFFF);
 
         var topPointLight =
-              new THREE.PointLight(0xFFFFFF);
+              new PointLight(0xFFFFFF);
 
         var rightPointLight =
-              new THREE.PointLight(0xFFFFFF);
+              topPointLight.clone();
 
-        var position = this.props.maze.get('position').toJS();
+        var position = this.props.match.get('position').toJS();
 
         // set its position
          rightPointLight.position.x = width;
@@ -55,30 +109,33 @@ export default React.createClass({
         // // add to the scene
          scene.add(pointLight);
 
-        var axes = new THREE.AxisHelper(50);
+        var axes = new AxisHelper(this.UNIT_LENGTH);
         scene.add(axes);
 
         var size = 2000;
         var step = this.UNIT_LENGTH;
 
-        var gridHelper = new THREE.GridHelper( size, step );
-        gridHelper.rotation.x = Math.PI/2;
+        //var gridHelper = new GridHelper( size, step );
+        //gridHelper.rotation.x = Math.PI/2;
 
-        scene.add( gridHelper );
+        //scene.add( gridHelper );
 
+        this.initObjects();
         this.addWalls(scene);
         this.addBorder(scene, width, height);
         this.addGridLines(scene);
-        this.marker = this.createMarker([position.x, position.y])
-        scene.add(this.marker);
+        this.userMarker = this.createMarker();
+        scene.add(this.userMarker);
 
-        camera.position.z = 100;
-        camera.position.x = 150;
-        camera.position.y = 150;
-        //camera.lookAt( new THREE.Vector3(width, height, 1));
+        let camera = new PerspectiveCamera(90, width/height, 1, 5000 );
+        camera.position.z = unitLength*10;//10 * this.UNIT_LENGTH;
+        //camera.rotation.z = 160;//10 * this.UNIT_LENGTH;
+        //camera.rotation.x = 180;//2.5 * this.UNIT_LENGTH;
+        //camera.position.y = 2;
+        //camera.lookAt( new Vector3(width/2, height, 1));
 
-        var renderer = new THREE.WebGLRenderer({antialias: true});
-        renderer.setSize( height, width );
+        var renderer = new WebGLRenderer({antialias: true});
+        renderer.setSize( width, height);
         renderer.setClearColor( 0x555555 );
 
         //replace or append the rendered scene
@@ -114,63 +171,30 @@ export default React.createClass({
 
         return render;
     },
-    createWall: function (x, y, coords, color) {
-        var color = color || 0x0080ab;
-        var geometry = new THREE.BoxGeometry( x, y, 10 );
-        var material = new THREE.MeshPhongMaterial( { color: color } );
+    createMarker: function () {
+        let ul = this.UNIT_LENGTH;
+        let marker = this.marker.clone();
+        marker.position.x = 0 * ul/5 + ul/2;
+        marker.position.y = 0 * ul/5 + ul/2;
+        marker.position.z = this.MARKER_FLR;
 
-        material.opacity = 0.8;
-        material.transparent = true;
-
-        var cube = new THREE.Mesh( geometry, material );
-        cube.castShadow = true;
-
-        cube.position.set(coords[0], coords[1], 20);
-
-        return cube;
+        return marker;
 
     },
-    createMarker: function (coords) {
-        var ul = this.UNIT_LENGTH;
-        var ceil = 35;
-        var flr = 20;
-        var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
-        var sphereMaterial = new THREE.MeshPhongMaterial( {color: 0xffff00 } );
-        this.marker = new THREE.Mesh( sphereGeometry, sphereMaterial );
-        this.marker.position.x = coords[0] * ul + ul/2;
-        this.marker.position.y = coords[1] * ul + ul/2;
-        this.marker.castShadow = true;
-
-        this.marker.position.z = this.MARKER_FLR;
-
-        return this.marker;
+    addWall: function (scene, isVertical, x, z) {
+        let cube = this.wall.clone()
+        cube.position.x = x;
+        cube.position.z = z;
+        if (isVertical) cube.rotation.y = 90;
+        scene.add(cube);
 
     },
-    updateMarker: function () {
-
+    updatePosition: function (obj, x, y) {
+        obj.position.x = x;
+        obj.position.y = y;
     },
-    createOpenFloor: function (coords) {
-        var ul = this.UNIT_LENGTH;
-        var geometry = new THREE.CircleGeometry( 6, 32 );
-        var material = new THREE.MeshBasicMaterial( {color: 0x000000 } );
-        var circle = new THREE.Mesh( geometry, material );
-        circle.position.set(coords[0], coords[1], this.MARKER_FLR);
-        circle.castShadow = true;
+    createFloor: function (coords) {
 
-
-        return circle;
-    },
-    createOpenCeiling: function (coords) {
-        var ul = this.UNIT_LENGTH;
-        var geometry = new THREE.CylinderGeometry( 5, 7, 10, 32 );
-        var material = new THREE.MeshPhongMaterial( {color: 0xFFA500} );
-        var cylinder = new THREE.Mesh( geometry, material );
-        cylinder.castShadow = true;
-
-        cylinder.position.set(coords[0], coords[1], this.MARKER_FLR);
-        cylinder.rotation.x = Math.PI/2;
-
-        return cylinder;
     },
     bounceMarker: function () {
         var flr = this.MARKER_FLR;
@@ -193,29 +217,29 @@ export default React.createClass({
     addBorder: function (scene, width, height){
         var config = this.props.getMaze().get('dimensions').toJS();
         var ul = this.UNIT_LENGTH;
-        var planeGeometry = new THREE.BoxGeometry( ul * config.x, ul * config.y, 20);
-        var planeMaterial = new THREE.MeshBasicMaterial({color:0xcccccc});
-        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        var planeGeometry = new BoxGeometry( ul * config.x, ul * config.y, 20);
+        var planeMaterial = new MeshBasicMaterial({color:0xcccccc});
+        var plane = new Mesh(planeGeometry, planeMaterial);
         plane.position.x = ul * config.x /2;
         plane.position.y = ul * config.y /2;
         plane.position.z = 10;
         scene.add(plane);
 
-        var lineMaterial = new THREE.LineBasicMaterial({
+        var lineMaterial = new LineBasicMaterial({
                 color: 0x0000ff,
                 linewidth: 5
         });
 
-        var lineGeometry = new THREE.Geometry();
+        var lineGeometry = new Geometry();
         lineGeometry.vertices.push(
-                    new THREE.Vector3( 0, 0, 20 ),
-                        new THREE.Vector3( 0, ul*config.y, 20 ),
-                        new THREE.Vector3( ul*config.x, ul*config.y, 20 ),
-                        new THREE.Vector3( ul*config.x, 0, 20 ),
-                        new THREE.Vector3( 0, 0, 20 )
+                    new Vector3( 0, 0, 20 ),
+                        new Vector3( 0, ul*config.y, 20 ),
+                        new Vector3( ul*config.x, ul*config.y, 20 ),
+                        new Vector3( ul*config.x, 0, 20 ),
+                        new Vector3( 0, 0, 20 )
                 );
 
-        var line = new THREE.Line( lineGeometry, lineMaterial );
+        var line = new Line( lineGeometry, lineMaterial );
         scene.add( line );
     },
     addGridLines: function (scene) {
@@ -237,69 +261,55 @@ export default React.createClass({
         }
     },
     addGridLine: function (scene, start, end) {
-        var lineMaterial = new THREE.LineBasicMaterial({
+        var lineMaterial = new LineBasicMaterial({
                 color: 0x00ffff,
                 linewidth: 2
         });
 
-        var lineGeometry = new THREE.Geometry();
+        var lineGeometry = new Geometry();
         lineGeometry.vertices.push(
-                    new THREE.Vector3( start[0], start[1], 20 ),
-                        new THREE.Vector3( end[0], end[1], 20 )
+                    new Vector3( start[0], start[1], 20 ),
+                        new Vector3( end[0], end[1], 20 )
                 );
 
-        var line = new THREE.Line( lineGeometry, lineMaterial );
+        var line = new Line( lineGeometry, lineMaterial );
         scene.add( line );
     },
-    addVerticalWall: function (scene, wall) {
-        var ul = this.UNIT_LENGTH;
-        var wd = this.WALL_DEPTH;
-        if (wall.exists) {
-            scene.add(this.createWall(wd, ul, [
-                        ul * wall.x + ul,
-                        ul * wall.y + (ul/2)
-            ]));
-        }
+    addVerticalWall: function (scene, x, y) {
+        let ul = this.UNIT_LENGTH;
+        this.addWall(scene, true, ul * x + ul, ul * y)
     },
-    addHorizontalWall: function (scene, wall) {
-        var ul = this.UNIT_LENGTH;
-        var wd = this.WALL_DEPTH;
-        if (wall.exists) {
-            scene.add(this.createWall(ul, wd, [
-                        ul * wall.x + (ul/2),
-                        ul * wall.y + ul
-            ]));
-        }
+    addHorizontalWall: function (scene, x, y) {
+        let ul = this.UNIT_LENGTH;
+        this.addWall(scene, false, ul * x, ul * y + ul)
     },
-    addCeilingWall: function (scene, wall) {
-        var ul = this.UNIT_LENGTH;
-        var wd = this.WALL_DEPTH;
-        if (!wall.exists) {
-            scene.add(this.createOpenCeiling(
-                        [
-                        ul * wall.x + ul * .3,
-                        ul * wall.y + ul * .7
-                        ]));
-        }
+    addCeiling: function (scene, x, y) {
+        let ul = this.UNIT_LENGTH;
+        let ceiling = this.ceiling.clone();
+        ceiling.position.x = x * ul + 1;
+        ceiling.position.z = y * ul + 1;
+        scene.add(ceiling);
     },
-    addFloorWall: function (scene, wall) {
-        var ul = this.UNIT_LENGTH;
-        var wd = this.WALL_DEPTH;
-        if (!wall.exists) {
-            scene.add(this.createOpenFloor(
-                        [
-                        ul * wall.x + ul * .7,
-                        ul * wall.y + ul * .3
-                        ]));
-        }
+    addFloor: function (scene, x, y) {
+        let ul = this.UNIT_LENGTH;
+        let floor = this.ceiling.clone();
+        floor.position.x = x * ul + 1;
+        floor.position.z = y * ul + 1;
+        scene.add(floor);
+    },
+    addWallObjects: function(scene, walls, renderer) {
+        walls.forEach(function(group, groupIdx) {
+            group.split('').forEach((wall, wallIdx)=>{
+                if (wall === '1') renderer(scene, groupIdx, wallIdx);
+            })
+        });
     },
     addWalls: function (scene) {
-        //walls is an array x,y,z]
-        console.log(this.props.app);
+        //walls is an array [x,y,zf, zc]
         var walls = this.props.getLevel().toJS();
-        _.flatten(walls[1], true).forEach(this.addHorizontalWall.bind(this, scene));
-        _.flatten(walls[0], true).forEach(this.addVerticalWall.bind(this, scene));
-        _.flatten(walls[2], true).forEach(this.addFloorWall.bind(this, scene));
-        _.flatten(walls[3], true).forEach(this.addCeilingWall.bind(this, scene));
+        this.addWallObjects(scene, walls[0], this.addVerticalWall);
+        this.addWallObjects(scene, walls[1], this.addHorizontalWall);
+        this.addWallObjects(scene, walls[2], this.addFloor);
+        this.addWallObjects(scene, walls[3], this.addCeiling);
     }
 });
