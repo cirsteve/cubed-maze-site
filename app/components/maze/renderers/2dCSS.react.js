@@ -97,6 +97,7 @@ export default React.createClass({
     UNIT_LENGTH: 30,
     render: function () {
         let level = this.props.level.toJS();
+        console.log('walls are now', level);
         let maze = this.props.currentMaze;
         let cols = [];
         let colCount = maze.get('dimensions').get('x');

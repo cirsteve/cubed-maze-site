@@ -2,6 +2,7 @@ import React from 'react';
 import cn from 'classnames';
 
 import MazeRenderer from './renderers/3dMazeMixin.react';
+//import MazeRenderer from './renderers/2dCSS.react';
 import { getStyle } from '../../utilities';
 import mazeStyle from '../../styling/maze';
 

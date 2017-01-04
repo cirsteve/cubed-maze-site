@@ -3,20 +3,17 @@ import ReactDOM from 'react-dom';
 import {Scene, PerspectiveCamera, SpotLight, PointLight,
     AxisHelper, GridHelper, WebGLRenderer, BoxGeometry, MeshPhongMaterial,
     CircleGeometry, LineBasicMaterial, SphereGeometry, Vector3,
-    Geometry, Line, MeshBasicMaterial, CylinderGeometry, Mesh} from 'three';
+    Geometry, Line, MeshBasicMaterial, CylinderGeometry, Mesh, Color} from 'three';
 import { updatePosition} from '../../../actions/MatchActions';
 
 export default React.createClass({
     UNIT_LENGTH: 5,
-    WALL_DEPTH: 1,
-    MARKER_CEIL: 4,
-    MARKER_FLR: 1,
     MARKER_ANIMATE_UP: true,
     COLORS: {
         wall: 0x0080ab,
-        ceiling: 0x808000,
-        floor: 0x8080ab,
-        marker: 0xaaaaaa
+        ceiling: 0x009933,
+        floor: 0x663333,
+        marker: 0x9900FF
     },
     componentDidMount: function () {
         this.createScene();
@@ -31,38 +28,46 @@ export default React.createClass({
     },
     initWall: function () {
         let ul = this.UNIT_LENGTH
-        let geometry = new BoxGeometry( ul, ul/2, ul/10  );
+        let geometry = new BoxGeometry( ul, 4, ul/10  );
         let material = new MeshPhongMaterial( { color: this.COLORS.wall } );
 
         material.opacity = 0.9;
         material.transparent = true;
 
         let cube = new Mesh( geometry, material );
+        cube.position.y = 1;
         return cube;
     },
     initFloor: function () {
         let ul = this.UNIT_LENGTH
-        let geometry = new BoxGeometry( ul, ul/5, ul );
-        let material = new MeshPhongMaterial( { color: this.COLORS.floor } );
+        let geometry = new BoxGeometry( .8*ul, ul/10, .8*ul );
+        let material = new MeshPhongMaterial({color: this.COLORS.ceiling});
+        material.emissive = new Color(this.COLORS.floor)
 
-        material.opacity = 0.9;
+        material.opacity = 0.5;
         material.transparent = true;
 
-        return new Mesh( geometry, material );
+        let cube = new Mesh( geometry, material );
+
+        return cube;
     },
     initCeiling: function () {
         let ul = this.UNIT_LENGTH
-        let geometry = new BoxGeometry( ul, ul/5, ul );
-        let material = new MeshPhongMaterial( { color: this.COLORS.ceiling } );
+        let geometry = new BoxGeometry( .8*ul, ul/10, .8*ul );
+        let material = new MeshPhongMaterial({color: this.COLORS.ceiling});
+        material.emissive = new Color(this.COLORS.ceiling)
 
-        material.opacity = 0.9;
+        material.opacity = 0.5;
         material.transparent = true;
 
-        return new Mesh( geometry, material );
+        let cube = new Mesh( geometry, material );
+
+        cube.position.y = ul;
+        return cube;
     },
     initMarker: function () {
         var ul = this.UNIT_LENGTH;
-        var sphereGeometry = new SphereGeometry( ul/2, ul*0.8, ul*0.8 );
+        var sphereGeometry = new SphereGeometry( 1.3, 16, 16 );
         var sphereMaterial = new MeshPhongMaterial( {color: this.COLORS.marker } );
         let marker = new Mesh( sphereGeometry, sphereMaterial );
         marker.castShadow = true;
@@ -73,6 +78,7 @@ export default React.createClass({
         var targetEl = this.refs.mazeTarget;
 
         var unitLength = this.UNIT_LENGTH;
+        let ul = this.UNIT_LENGTH;
 
         var width = 300;
         var height = 400;
@@ -109,27 +115,28 @@ export default React.createClass({
         // // add to the scene
          scene.add(pointLight);
 
-        var axes = new AxisHelper(this.UNIT_LENGTH);
-        scene.add(axes);
+        //var axes = new AxisHelper(this.UNIT_LENGTH);
+        //scene.add(axes);
 
         var size = 2000;
         var step = this.UNIT_LENGTH;
 
         //var gridHelper = new GridHelper( size, step );
         //gridHelper.rotation.x = Math.PI/2;
-
         //scene.add( gridHelper );
 
         this.initObjects();
         this.addWalls(scene);
-        this.addBorder(scene, width, height);
+        //this.addBorder(scene, width, height);
         this.addGridLines(scene);
         this.userMarker = this.createMarker();
         scene.add(this.userMarker);
 
-        let camera = new PerspectiveCamera(90, width/height, 1, 5000 );
-        camera.position.z = unitLength*10;//10 * this.UNIT_LENGTH;
-        //camera.rotation.z = 160;//10 * this.UNIT_LENGTH;
+        let camera = new PerspectiveCamera(90, width/height, .1, 5000 );
+        camera.position.z = 0;//10 * this.UNIT_LENGTH;
+        camera.position.y = ul * 5;
+        camera.position.x = ul * 3;
+        camera.rotation.x = -20;//10 * this.UNIT_LENGTH;
         //camera.rotation.x = 180;//2.5 * this.UNIT_LENGTH;
         //camera.position.y = 2;
         //camera.lookAt( new Vector3(width/2, height, 1));
@@ -174,9 +181,9 @@ export default React.createClass({
     createMarker: function () {
         let ul = this.UNIT_LENGTH;
         let marker = this.marker.clone();
-        marker.position.x = 0 * ul/5 + ul/2;
-        marker.position.y = 0 * ul/5 + ul/2;
-        marker.position.z = this.MARKER_FLR;
+        marker.position.x =  ul/2;
+        marker.position.y = 2;
+        marker.position.z = ul/2 * -1;
 
         return marker;
 
@@ -185,7 +192,7 @@ export default React.createClass({
         let cube = this.wall.clone()
         cube.position.x = x;
         cube.position.z = z;
-        if (isVertical) cube.rotation.y = 90;
+        if (isVertical) cube.rotation.y = Math.PI / 2;
         scene.add(cube);
 
     },
@@ -268,8 +275,8 @@ export default React.createClass({
 
         var lineGeometry = new Geometry();
         lineGeometry.vertices.push(
-                    new Vector3( start[0], start[1], 20 ),
-                        new Vector3( end[0], end[1], 20 )
+                    new Vector3( start[0], 0, start[1] * -1),
+                        new Vector3( end[0], 0, end[1] * -1 )
                 );
 
         var line = new Line( lineGeometry, lineMaterial );
@@ -277,24 +284,24 @@ export default React.createClass({
     },
     addVerticalWall: function (scene, x, y) {
         let ul = this.UNIT_LENGTH;
-        this.addWall(scene, true, ul * x + ul, ul * y)
+        this.addWall(scene, true, ul * x + ul, (ul * y + (ul/2))* -1)
     },
     addHorizontalWall: function (scene, x, y) {
         let ul = this.UNIT_LENGTH;
-        this.addWall(scene, false, ul * x, ul * y + ul)
+        this.addWall(scene, false, ul * x + (ul/2), (ul * x + ul)* -1)
     },
     addCeiling: function (scene, x, y) {
         let ul = this.UNIT_LENGTH;
         let ceiling = this.ceiling.clone();
-        ceiling.position.x = x * ul + 1;
-        ceiling.position.z = y * ul + 1;
+        ceiling.position.x = x * ul + (.5*ul);
+        ceiling.position.z = (y * ul + (.5*ul))*-1;
         scene.add(ceiling);
     },
     addFloor: function (scene, x, y) {
         let ul = this.UNIT_LENGTH;
-        let floor = this.ceiling.clone();
-        floor.position.x = x * ul + 1;
-        floor.position.z = y * ul + 1;
+        let floor = this.floor.clone();
+        floor.position.x = x * ul + (.5*ul);
+        floor.position.z = (y * ul + (.5*ul)) * -1;
         scene.add(floor);
     },
     addWallObjects: function(scene, walls, renderer) {
@@ -304,12 +311,19 @@ export default React.createClass({
             })
         });
     },
+    updategMarker: function () {
+        let position = this.props.match.get('position');
+        let ul = this.UNIT_LENGTH;
+        this.userMarker.position.x = position[0] * ul + (ul/2);
+        this.userMarker.position.z = (position[0] * ul + (ul/2)) * -1;
+    },
     addWalls: function (scene) {
         //walls is an array [x,y,zf, zc]
-        var walls = this.props.getLevel().toJS();
+        var walls = this.props.level.toJS();
+        console.log('walls are', walls);
         this.addWallObjects(scene, walls[0], this.addVerticalWall);
         this.addWallObjects(scene, walls[1], this.addHorizontalWall);
-        this.addWallObjects(scene, walls[2], this.addFloor);
-        this.addWallObjects(scene, walls[3], this.addCeiling);
+        this.addWallObjects(scene, walls[3], this.addFloor);
+        this.addWallObjects(scene, walls[2], this.addCeiling);
     }
 });
