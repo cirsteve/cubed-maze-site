@@ -53,9 +53,9 @@ let Node = React.createClass({
         };
         let hintIcon = hintIconMap[hint] || 'nothing';
 
-
+        let classname = `cnt ${this.props.num}`
         return (
-            <div style={nodeStyle}>
+            <div style={nodeStyle} className={classname}>
                 <div style={ceilingStyle}></div>
                 <div style={floorStyle}></div>
                 <div style={hintStyle}>
@@ -77,7 +77,7 @@ let Column = React.createClass({
             let zc = col[2][i] ? col[2][i] === '1' : true;
             let zf = col[3][i] ? col[3][i] === '1' : true;
             coords = ''+this.props.colIndex+i+this.props.currentLevel
-            nodes.unshift(<Node key={i}
+            nodes.unshift(<Node key={i} num={i}
                 x={x}
                 y={y}
                 zf={zf}

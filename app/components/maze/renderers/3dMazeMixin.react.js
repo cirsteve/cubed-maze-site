@@ -17,6 +17,7 @@ export default React.createClass({
     },
     componentDidMount: function () {
         this.createScene();
+        this.currentLevel = 1;
         document.addEventListener("keydown",this.props.dispatch(updatePosition), false);
     },
     initObjects: function () {
@@ -25,6 +26,7 @@ export default React.createClass({
         this.floor = this.initFloor();
         this.ceiling = this.initCeiling();
         this.marker = this.initMarker();
+        this.objectCache = {levels:[]};
     },
     initWall: function () {
         let ul = this.UNIT_LENGTH
@@ -62,7 +64,7 @@ export default React.createClass({
 
         let cube = new Mesh( geometry, material );
 
-        cube.position.y = ul;
+        cube.position.y = ul-1;
         return cube;
     },
     initMarker: function () {
@@ -130,6 +132,7 @@ export default React.createClass({
         //this.addBorder(scene, width, height);
         this.addGridLines(scene);
         this.userMarker = this.createMarker();
+        this.updateMarker();
         scene.add(this.userMarker);
 
         let camera = new PerspectiveCamera(90, width/height, .1, 5000 );
@@ -148,7 +151,9 @@ export default React.createClass({
         //replace or append the rendered scene
         var sceneNodeParent = ReactDOM.findDOMNode(targetEl);
         var sceneNode = sceneNodeParent.firstChild;
-        if (this.props.app.newLevel) {
+        let currentLevel = this.props.match.get('position').get(2);
+        if (this.currentLevel !== currentLevel) {
+            this.currentLevel = currentLevel;
             if (sceneNode) sceneNodeParent.removeChild(sceneNode);
         }
         sceneNodeParent.appendChild( renderer.domElement );
@@ -161,7 +166,9 @@ export default React.createClass({
                 <div ref="mazeTarget" className="maze-target"></div>);
     },
     componentDidUpdate: function () {
-        if (this.props.app.newLevel) {
+        console.log('updating....', this.currentLevel)
+        let currentLevel = this.props.match.get('position').get(2);
+        if (this.currentLevel !== currentLevel) {
             this.createScene();
         } else {
             this.updateMarker();
@@ -173,7 +180,7 @@ export default React.createClass({
         function render() {
                 requestAnimationFrame( render );
                 bm();
-                    renderer.render( scene, camera );
+                renderer.render( scene, camera );
         }
 
         return render;
@@ -200,26 +207,23 @@ export default React.createClass({
         obj.position.x = x;
         obj.position.y = y;
     },
-    createFloor: function (coords) {
-
-    },
     bounceMarker: function () {
-        var flr = this.MARKER_FLR;
-        var ceil = this.MARKER_CEIL;
-        var marker = this.marker;
-        var posZ = marker.position.z;
-        var z = 0.3;
+        var flr = 1;
+        var ceil = 3;
+        var marker = this.userMarker;
+        var posY = marker.position.y;
+        var y = 0.3;
         var animateUp = this.MARKER_ANIMATE_UP;
-        if (animateUp && posZ > ceil) {
+        if (animateUp && posY > ceil) {
             this.MARKER_ANIMATE_UP = false;
-            z = -0.1;
-        } else if (!animateUp && posZ < flr) {
+            y = -0.05;
+        } else if (!animateUp && posY < flr) {
             this.MARKER_ANIMATE_UP = true;
-            z = 0.1;
+            y = 0.05;
         } else if (!animateUp) {
-            z = -0.1;
+            y = -0.05;
         }
-        marker.translateZ(z);
+        marker.translateY(y);
     },
     addBorder: function (scene, width, height){
         var config = this.props.getMaze().get('dimensions').toJS();
@@ -288,7 +292,7 @@ export default React.createClass({
     },
     addHorizontalWall: function (scene, x, y) {
         let ul = this.UNIT_LENGTH;
-        this.addWall(scene, false, ul * x + (ul/2), (ul * x + ul)* -1)
+        this.addWall(scene, false, ul * x+(ul/2), (ul * x + ul)* -1)
     },
     addCeiling: function (scene, x, y) {
         let ul = this.UNIT_LENGTH;
@@ -311,11 +315,12 @@ export default React.createClass({
             })
         });
     },
-    updategMarker: function () {
-        let position = this.props.match.get('position');
+    updateMarker: function () {
+        let position = this.props.match.get('position').toJS();
         let ul = this.UNIT_LENGTH;
+        console.log('updating marker', position);
         this.userMarker.position.x = position[0] * ul + (ul/2);
-        this.userMarker.position.z = (position[0] * ul + (ul/2)) * -1;
+        this.userMarker.position.z = (position[1] * ul + (ul/2)) * -1;
     },
     addWalls: function (scene) {
         //walls is an array [x,y,zf, zc]
