@@ -39,8 +39,7 @@ const stateToProps = function (state) {
             let dimensions = maze && maze.get('dimensions');
             return dimensions && [dimensions.get('x')-1, dimensions.get('y')-1, dimensions.get('z')-1];
         },
-        getLevel: function (maze=this.getMaze()) {
-            let level = this.match.get('position').get(2);
+        getLevel: function (maze=this.getMaze(), level=this.match.get('position').get(2)) {
             let walls = maze.get('walls').get(level);
 
             //if not the first level get the z walls for the level above
@@ -51,6 +50,13 @@ const stateToProps = function (state) {
                 walls = walls.push([]);
             }
             return walls;
+        },
+        getFormattedLevels: function(walls) {
+            //given an array of [x,y,z] walls per level returns an array in the format x,y,zc,zf
+            return walls.map(function(level, idx, levels) {
+                level.push(levels[idx-1] ? levels[idx-1][2] : []);
+                return level;
+            });
         }
     };
 }

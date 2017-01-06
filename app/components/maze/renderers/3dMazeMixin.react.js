@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Scene, PerspectiveCamera, SpotLight, PointLight,
-    AxisHelper, GridHelper, WebGLRenderer, BoxGeometry, MeshPhongMaterial,
+    AxisHelper, GridHelper, WebGLRenderer, BoxGeometry, MeshPhongMaterial, MeshLambertMaterial,
     CircleGeometry, LineBasicMaterial, SphereGeometry, Vector3,
-    Geometry, Line, MeshBasicMaterial, CylinderGeometry, Mesh, Color} from 'three';
+    Geometry, Line, MeshBasicMaterial, CylinderGeometry, Mesh, Color, Group} from 'three';
 import { updatePosition} from '../../../actions/MatchActions';
 
 export default React.createClass({
     UNIT_LENGTH: 5,
     MARKER_ANIMATE_UP: true,
+    WIDTH: 300,
+    HEIGHT: 400,
     COLORS: {
         wall: 0x0080ab,
         ceiling: 0x009933,
@@ -17,21 +19,41 @@ export default React.createClass({
     },
     componentDidMount: function () {
         this.createScene();
-        this.currentLevel = 1;
         document.addEventListener("keydown",this.props.dispatch(updatePosition), false);
     },
     initObjects: function () {
-        //create the objects needs for threejs
+        //create the objects needs for the game
         this.wall = this.initWall();
         this.floor = this.initFloor();
         this.ceiling = this.initCeiling();
         this.marker = this.initMarker();
-        this.objectCache = {levels:[]};
+        this.renderer = this.initRenderer();
+        this.objectCache = this.createGameObjects();
+    },
+    initScene: function () {
+        return {
+            scene: new Scene(),
+            renderedLevel: null
+        };
+    },
+    initRenderer: function () {
+        let renderer = new WebGLRenderer({antialias: true});
+        renderer.setSize( this.WIDTH, this.HEIGHT);
+        renderer.setClearColor( 0x555555 );
+        return renderer;
+    },
+    createGameObjects: function () {
+        //clone the base objects to construct the objects needs for play
+        //and added the object cache
+        return {
+            levels: this.createLevels(),
+            marker: this.createMarker()
+        };
     },
     initWall: function () {
         let ul = this.UNIT_LENGTH
         let geometry = new BoxGeometry( ul, 4, ul/10  );
-        let material = new MeshPhongMaterial( { color: this.COLORS.wall } );
+        let material = new MeshLambertMaterial( { color: this.COLORS.wall } );
 
         material.opacity = 0.9;
         material.transparent = true;
@@ -43,7 +65,7 @@ export default React.createClass({
     initFloor: function () {
         let ul = this.UNIT_LENGTH
         let geometry = new BoxGeometry( .8*ul, ul/10, .8*ul );
-        let material = new MeshPhongMaterial({color: this.COLORS.ceiling});
+        let material = new MeshLambertMaterial({color: this.COLORS.ceiling});
         material.emissive = new Color(this.COLORS.floor)
 
         material.opacity = 0.5;
@@ -56,7 +78,7 @@ export default React.createClass({
     initCeiling: function () {
         let ul = this.UNIT_LENGTH
         let geometry = new BoxGeometry( .8*ul, ul/10, .8*ul );
-        let material = new MeshPhongMaterial({color: this.COLORS.ceiling});
+        let material = new MeshLambertMaterial({color: this.COLORS.ceiling});
         material.emissive = new Color(this.COLORS.ceiling)
 
         material.opacity = 0.5;
@@ -64,116 +86,62 @@ export default React.createClass({
 
         let cube = new Mesh( geometry, material );
 
-        cube.position.y = ul-1;
+        cube.position.y = ul-2;
         return cube;
     },
     initMarker: function () {
         var ul = this.UNIT_LENGTH;
-        var sphereGeometry = new SphereGeometry( 1.3, 16, 16 );
-        var sphereMaterial = new MeshPhongMaterial( {color: this.COLORS.marker } );
+        var sphereGeometry = new SphereGeometry( 1.3, 12, 12 );
+        var sphereMaterial = new MeshLambertMaterial( {color: this.COLORS.marker } );
         let marker = new Mesh( sphereGeometry, sphereMaterial );
         marker.castShadow = true;
         return marker;
     },
-    createScene: function () {
-        var scene = new Scene();
-        var targetEl = this.refs.mazeTarget;
 
-        var unitLength = this.UNIT_LENGTH;
+    //fixed objects are added once to scene and not animated
+    addFixedObjects: function (scene) {
         let ul = this.UNIT_LENGTH;
-
-        var width = 300;
-        var height = 400;
-
-        var pointLight =
-              new SpotLight(0xFFFFFF);
-
-        var topPointLight =
-              new PointLight(0xFFFFFF);
-
-        var rightPointLight =
-              topPointLight.clone();
-
-        var position = this.props.match.get('position').toJS();
-
+        let spotLight = new SpotLight(0xFFFFFF);
         // set its position
-         rightPointLight.position.x = width;
-         rightPointLight.position.y = 500;
-         rightPointLight.position.z = 130;
-         rightPointLight.rotation.x = Math.PI/.5;
+        spotLight.position.x = this.WIDTH;
+        spotLight.position.y = this.HEIGHT;
+        spotLight.position.z = 130;
+        spotLight.castShadow = true;
+        scene.add(spotLight);
 
-        // set its position
-         topPointLight.position.x = width;
-         topPointLight.position.y = 500;
-         topPointLight.position.z = 130;
-         topPointLight.rotation.x = Math.PI/2;
+        this.camera = new PerspectiveCamera(90, this.HEIGHT/this.WIDTH, .1, 5000 );
+        this.camera.position.z = 0;
+        this.camera.position.y = ul * 5;
+        this.camera.position.x = ul * 3;
+        this.camera.rotation.x = -20;
+        scene.add(this.camera);
 
-        // set its position
-         pointLight.position.x = width;
-         pointLight.position.y = 500;
-         pointLight.position.z = 130;
-         pointLight.castShadow = true;
-        //
-        // // add to the scene
-         scene.add(pointLight);
+        this.addGridLines(scene);
+    },
 
-        //var axes = new AxisHelper(this.UNIT_LENGTH);
-        //scene.add(axes);
-
-        var size = 2000;
-        var step = this.UNIT_LENGTH;
-
-        //var gridHelper = new GridHelper( size, step );
-        //gridHelper.rotation.x = Math.PI/2;
-        //scene.add( gridHelper );
+    createScene: function () {
+        this.scene = this.initScene();
 
         this.initObjects();
-        this.addWalls(scene);
         //this.addBorder(scene, width, height);
-        this.addGridLines(scene);
-        this.userMarker = this.createMarker();
-        this.updateMarker();
-        scene.add(this.userMarker);
 
-        let camera = new PerspectiveCamera(90, width/height, .1, 5000 );
-        camera.position.z = 0;//10 * this.UNIT_LENGTH;
-        camera.position.y = ul * 5;
-        camera.position.x = ul * 3;
-        camera.rotation.x = -20;//10 * this.UNIT_LENGTH;
-        //camera.rotation.x = 180;//2.5 * this.UNIT_LENGTH;
-        //camera.position.y = 2;
-        //camera.lookAt( new Vector3(width/2, height, 1));
+        this.addFixedObjects(this.scene.scene);
+        this.scene.scene.add(this.objectCache.marker);
 
-        var renderer = new WebGLRenderer({antialias: true});
-        renderer.setSize( width, height);
-        renderer.setClearColor( 0x555555 );
+        ReactDOM.findDOMNode(this.refs.mazeTarget).appendChild( this.renderer.domElement );
 
-        //replace or append the rendered scene
-        var sceneNodeParent = ReactDOM.findDOMNode(targetEl);
-        var sceneNode = sceneNodeParent.firstChild;
-        let currentLevel = this.props.match.get('position').get(2);
-        if (this.currentLevel !== currentLevel) {
-            this.currentLevel = currentLevel;
-            if (sceneNode) sceneNodeParent.removeChild(sceneNode);
-        }
-        sceneNodeParent.appendChild( renderer.domElement );
+        this.addLevelToScene(0)
 
-        this.renderScene  = this.getRenderer(renderer, scene, camera);
-        this.renderScene();
+        this.renderScene  = this.getRenderer(this.renderer, this.scene.scene, this.camera);
     },
     render: function () {
         return (
                 <div ref="mazeTarget" className="maze-target"></div>);
     },
-    componentDidUpdate: function () {
-        console.log('updating....', this.currentLevel)
-        let currentLevel = this.props.match.get('position').get(2);
-        if (this.currentLevel !== currentLevel) {
-            this.createScene();
-        } else {
-            this.updateMarker();
-        }
-        this.renderScene();
+    addLevelToScene: function (level, remove) {
+        this.scene.scene.remove(remove)
+        this.scene.scene.add(this.objectCache.levels[level]);
+        this.scene.renderedLevel = level;
     },
     getRenderer: function (renderer, scene, camera) {
         var bm  = this.bounceMarker;
@@ -185,6 +153,14 @@ export default React.createClass({
 
         return render;
     },
+    componentDidUpdate: function () {
+        if (this.scene.renderedLevel !== this.props.currentLevel) {
+            this.addLevelToScene(this.props.currentLevel, `level_${this.scene.renderedLevel}`);
+        } else {
+            this.updateMarker();
+        }
+        this.renderScene();
+    },
     createMarker: function () {
         let ul = this.UNIT_LENGTH;
         let marker = this.marker.clone();
@@ -195,13 +171,12 @@ export default React.createClass({
         return marker;
 
     },
-    addWall: function (scene, isVertical, x, z) {
-        let cube = this.wall.clone()
-        cube.position.x = x;
-        cube.position.z = z;
-        if (isVertical) cube.rotation.y = Math.PI / 2;
-        scene.add(cube);
-
+    updateMarker: function () {
+        let position = this.props.match.get('position').toJS();
+        let ul = this.UNIT_LENGTH;
+        console.log('updating marker', position);
+        this.objectCache.marker.position.x = position[0] * ul + (ul/2);
+        this.objectCache.marker.position.z = (position[1] * ul + (ul/2)) * -1;
     },
     updatePosition: function (obj, x, y) {
         obj.position.x = x;
@@ -210,7 +185,7 @@ export default React.createClass({
     bounceMarker: function () {
         var flr = 1;
         var ceil = 3;
-        var marker = this.userMarker;
+        var marker = this.objectCache.marker;
         var posY = marker.position.y;
         var y = 0.3;
         var animateUp = this.MARKER_ANIMATE_UP;
@@ -286,49 +261,55 @@ export default React.createClass({
         var line = new Line( lineGeometry, lineMaterial );
         scene.add( line );
     },
-    addVerticalWall: function (scene, x, y) {
-        let ul = this.UNIT_LENGTH;
-        this.addWall(scene, true, ul * x + ul, (ul * y + (ul/2))* -1)
+
+    addWall: function (group, isVertical, x, z) {
+        let cube = this.wall.clone()
+        cube.position.x = x;
+        cube.position.z = z;
+        if (isVertical) cube.rotation.y = Math.PI / 2;
+        group.add(cube);
+
     },
-    addHorizontalWall: function (scene, x, y) {
+    addVerticalWall: function (group, x, y) {
         let ul = this.UNIT_LENGTH;
-        this.addWall(scene, false, ul * x+(ul/2), (ul * x + ul)* -1)
+        this.addWall(group, true, ul * x + ul, (ul * y + (ul/2))* -1)
     },
-    addCeiling: function (scene, x, y) {
+    addHorizontalWall: function (group, x, y) {
+        let ul = this.UNIT_LENGTH;
+        this.addWall(group, false, ul * x+(ul/2), (ul * x + ul)* -1)
+    },
+    addCeiling: function (group, x, y) {
         let ul = this.UNIT_LENGTH;
         let ceiling = this.ceiling.clone();
         ceiling.position.x = x * ul + (.5*ul);
         ceiling.position.z = (y * ul + (.5*ul))*-1;
-        scene.add(ceiling);
+        group.add(ceiling);
     },
-    addFloor: function (scene, x, y) {
+    addFloor: function (group, x, y) {
         let ul = this.UNIT_LENGTH;
         let floor = this.floor.clone();
         floor.position.x = x * ul + (.5*ul);
         floor.position.z = (y * ul + (.5*ul)) * -1;
-        scene.add(floor);
+        group.add(floor);
     },
-    addWallObjects: function(scene, walls, renderer) {
-        walls.forEach(function(group, groupIdx) {
-            group.split('').forEach((wall, wallIdx)=>{
-                if (wall === '1') renderer(scene, groupIdx, wallIdx);
+    createLevels: function () {
+        return this.props.levels.map(this.createWallGroups);
+    },
+    addWallObjects: function(group, walls, renderer) {
+        walls.forEach(function(column, colIdx) {
+            column.split('').forEach((wall, rowIdx)=>{
+                if (wall === '1') renderer(group, colIdx, rowIdx);
             })
         });
     },
-    updateMarker: function () {
-        let position = this.props.match.get('position').toJS();
-        let ul = this.UNIT_LENGTH;
-        console.log('updating marker', position);
-        this.userMarker.position.x = position[0] * ul + (ul/2);
-        this.userMarker.position.z = (position[1] * ul + (ul/2)) * -1;
-    },
-    addWalls: function (scene) {
+    createWallGroups: function (walls, level) {
         //walls is an array [x,y,zf, zc]
-        var walls = this.props.level.toJS();
-        console.log('walls are', walls);
-        this.addWallObjects(scene, walls[0], this.addVerticalWall);
-        this.addWallObjects(scene, walls[1], this.addHorizontalWall);
-        this.addWallObjects(scene, walls[3], this.addFloor);
-        this.addWallObjects(scene, walls[2], this.addCeiling);
+        let group = new Group();
+        group.name = `level_${level}`;
+        this.addWallObjects(group, walls[0], this.addVerticalWall);
+        this.addWallObjects(group, walls[1], this.addHorizontalWall);
+        this.addWallObjects(group, walls[3], this.addFloor);
+        this.addWallObjects(group, walls[2], this.addCeiling);
+        return group;
     }
 });
