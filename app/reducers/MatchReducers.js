@@ -23,6 +23,7 @@ let hintRecord = {
 }
 
 const initialState = fromJS({
+    newMaze: false,//boolean used by threejs on wheather or not to init a new maze
     position: [0,0,0],
     hints: Map(),
     gameState: 'preplay'
@@ -40,14 +41,15 @@ export default function (state = initialState, action) {
                 return state.set('position', fromJS(action.position));
             }
         case 'START_GAME':
-                return state.set('gameState', 'inplay');
+                return state.merge({gameState: 'inplay', newMaze: false});
         case 'END_GAME':
                 return state.set('gameState', 'lost');
         case 'INIT_GAME':
             return state.merge(fromJS({
                 hints: Map(),
                 position: [0,0,0],
-                gameState: 'preplay'
+                gameState: 'preplay',
+                newMaze: true
             }));
         case 'ADD_HINT':
             return state.setIn(['hints', action.coords], action.direction);

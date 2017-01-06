@@ -12,7 +12,7 @@ export default React.createClass({
     WIDTH: 300,
     HEIGHT: 400,
     COLORS: {
-        wall: 0x0080ab,
+        wall: 0xFF0033,
         ceiling: 0x009933,
         floor: 0x663333,
         marker: 0x9900FF
@@ -139,7 +139,8 @@ export default React.createClass({
                 <div ref="mazeTarget" className="maze-target"></div>);
     },
     addLevelToScene: function (level, remove) {
-        this.scene.scene.remove(remove)
+        console.log('changing levels', level, remove);
+        if (remove) this.scene.scene.remove(remove);
         this.scene.scene.add(this.objectCache.levels[level]);
         this.scene.renderedLevel = level;
     },
@@ -154,8 +155,13 @@ export default React.createClass({
         return render;
     },
     componentDidUpdate: function () {
-        if (this.scene.renderedLevel !== this.props.currentLevel) {
-            this.addLevelToScene(this.props.currentLevel, `level_${this.scene.renderedLevel}`);
+        if (this.props.newMaze) {
+            this.scene.scene.remove(this.objectCache.levels[this.objectCache.levels.length-1])
+            this.objectCache.levels = this.createLevels()
+            this.addLevelToScene(this.props.currentLevel);
+            this.updateMarker();
+        } else if (this.scene.renderedLevel !== this.props.currentLevel) {
+            this.addLevelToScene(this.props.currentLevel, this.objectCache.levels[this.scene.renderedLevel]);
         } else {
             this.updateMarker();
         }
@@ -178,10 +184,6 @@ export default React.createClass({
         this.objectCache.marker.position.x = position[0] * ul + (ul/2);
         this.objectCache.marker.position.z = (position[1] * ul + (ul/2)) * -1;
     },
-    updatePosition: function (obj, x, y) {
-        obj.position.x = x;
-        obj.position.y = y;
-    },
     bounceMarker: function () {
         var flr = 1;
         var ceil = 3;
@@ -201,9 +203,9 @@ export default React.createClass({
         marker.translateY(y);
     },
     addBorder: function (scene, width, height){
-        var config = this.props.getMaze().get('dimensions').toJS();
+        var config = this.props.currentMaze.get('dimensions');
         var ul = this.UNIT_LENGTH;
-        var planeGeometry = new BoxGeometry( ul * config.x, ul * config.y, 20);
+        var planeGeometry = new BoxGeometry( ul * config.x, ul * config.y, ul/5);
         var planeMaterial = new MeshBasicMaterial({color:0xcccccc});
         var plane = new Mesh(planeGeometry, planeMaterial);
         plane.position.x = ul * config.x /2;
@@ -272,11 +274,13 @@ export default React.createClass({
     },
     addVerticalWall: function (group, x, y) {
         let ul = this.UNIT_LENGTH;
+        console.log('add v wall', x, y)
         this.addWall(group, true, ul * x + ul, (ul * y + (ul/2))* -1)
     },
     addHorizontalWall: function (group, x, y) {
         let ul = this.UNIT_LENGTH;
-        this.addWall(group, false, ul * x+(ul/2), (ul * x + ul)* -1)
+        console.log('add h wall', x, y);
+        this.addWall(group, false, ul * x+(ul/2), (ul * y + ul)* -1)
     },
     addCeiling: function (group, x, y) {
         let ul = this.UNIT_LENGTH;
@@ -293,6 +297,7 @@ export default React.createClass({
         group.add(floor);
     },
     createLevels: function () {
+        console.log('creating levels', this.props.levels);
         return this.props.levels.map(this.createWallGroups);
     },
     addWallObjects: function(group, walls, renderer) {

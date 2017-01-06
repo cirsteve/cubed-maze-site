@@ -2,7 +2,6 @@ import { Map } from 'immutable';
 import MC from 'maze-cube';
 
 const initialState = Map({
-    currentMazeId: null,
     screen: 'config',
     showInstructions: false,
     instructionMaze: new MC.Maze({x:2, y:2, z: 2}),
