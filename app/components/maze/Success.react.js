@@ -14,7 +14,7 @@ export default React.createClass({
         ]);
         return (
             <div style={wrapper}>
-                <h2>Time Expired!</h2>
+                <h2>You did it!</h2>
                 <h3>Can you go higher?</h3>
                 <button onClick={this._nextLevel}>Next Level</button>
             </div>

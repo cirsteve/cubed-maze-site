@@ -62,6 +62,9 @@ const stateToProps = function (state) {
 }
 
 export const App = React.createClass({
+    componentDidMount: function () {
+
+    },
     render: function () {
         let screenComponent;
         switch (this.props.app.get('screen')) {

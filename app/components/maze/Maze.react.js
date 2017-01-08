@@ -14,6 +14,7 @@ export default React.createClass({
             currentMaze={this.props.getMaze()}
             currentLevel={this.props.match.get('position').get(2)}
             newMaze={this.props.match.get('newMaze')}
+            hints={this.props.match.get('hints')}
             goal={this.props.getGoal()} />;
         let width = `${this.props.dimensions.x * 50}px`;
         let wrapperStyle = getStyle([

@@ -122,7 +122,7 @@ export default React.createClass({
         };
 
         let currentNode = this.props.match.get('position').toJS();
-        let path = MC.path(this.props.maze.get('maze').get('walls').toJS(), currentNode, this.props.getGoal())
+        let path = MC.path(this.props.walls, currentNode, this.props.getGoal())
         let current = path[path.length-1]
         let next = path[path.length-2]
         let boundary = MC.getBoundary(current, next);
@@ -131,8 +131,7 @@ export default React.createClass({
     _keydown: function (e) {
         let current = this.props.match.get('position').toJS();
         let update = moveMap[e.keyCode](current);
-        let dim = this.props.getMaze().get('dimensions');
-        if (MC.evaluate(this.props.getMaze().toJS().walls, current, update)) {
+        if (MC.evaluate(this.props.walls, current, update)) {
             let atEnd = parseInt(update.join(''), 10) - parseInt(this.props.getGoal().join(''), 10) === 0;
             this.props.dispatch(updatePosition(update, atEnd));
         }
