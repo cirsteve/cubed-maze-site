@@ -415,7 +415,7 @@ export default React.createClass({
     createWallGroups: function (ultimateLevel, walls, level) {
         //walls is an array [x,y,zf, zc]
         let group = new Group();
-
+        this.addOuterWalls(group)
         if (ultimateLevel === level) {
             //group.add(this.goalLight.clone());
             group.add(this.getOuterCeiling())
@@ -426,7 +426,7 @@ export default React.createClass({
         this.addWallObjects(group, walls[1], this.addHorizontalWall);
         this.addWallObjects(group, walls[3], this.addFloor);
         this.addWallObjects(group, walls[2], this.addCeiling);
-        this.addOuterWalls(group)
+
 
 
         return group;

@@ -25,8 +25,8 @@ let DirectionControls = React.createClass({
 
         return (
             <div style={mazeStyle.directionControls}>
-                <div>
-                    <div style={centerStyle}>
+                <div onTouchEnd={this.props.moveNorth}>
+                    <div style={centerStyle} style={mazeStyle.controlBtn onTouchEnd={this.props.moveNorth}}>
                         <FA name="arrow-up" size="2x" />
                     </div>
                 </div>
@@ -34,15 +34,15 @@ let DirectionControls = React.createClass({
                     display: 'flex',
                     justifyContent: 'space-between'
                 }}>
-                    <div>
+                    <div onTouchEnd={this.props.moveWest} style={mazeStyle.controlBtn}>
                         <FA name="arrow-left" size="2x" />
                     </div>
-                    <div>
+                    <div onTouchEnd={this.props.moveEast} style={mazeStyle.controlBtn}>
                         <FA name="arrow-right" size="2x" />
                     </div>
                 </div>
                 <div style={centerStyle}>
-                    <div>
+                    <div onTouchEnd={this.props.moveSouth} style={mazeStyle.controlBtn}>
                         <FA name="arrow-down" size="2x" />
                     </div>
                 </div>
@@ -74,11 +74,17 @@ let LevelControls = React.createClass({
                     Level
                 </div>
                 <div>
-                    <div>
-                        Down w
+                    <div onTouchEnd={this.props.moveUp}>
+                        Up
+                        <div style={mazeStyle.controlBtn}>
+                            W
+                        </div>
                     </div>
-                    <div>
-                        Up s
+                    <div onTouchEnd={this.props.moveDown}>
+                        Down
+                        <div style={mazeStyle.controlBtn}>
+                            S
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,17 +97,27 @@ export default React.createClass({
 
         return (
             <div style={mazeStyle.controlGroup}>
-                <LevelControls />
+                <LevelControls moveUp={this.moveUp} moveDown={this.moveDown}/>
                 <div>
                     <button type="button"
                         onClick={this._addHint}>Get Hint</button>
                     <LevelIndicator levels={this.props.maxLevels} level={this.props.level} />
                 </div>
-                <DirectionControls />
+                <DirectionControls
+                    moveNorth={this.moveNorth}
+                    moveSouth={this.moveSouth}
+                    moveEast={this.moveEast}
+                    moveWest={this.moveWest}/>
             </div>
             );
     },
     componentDidMount: function () {
+        this.moveUp=this.handleMove.bind(this, 87);
+        this.moveDown=this.handleMove.bind(this, 83);
+        this.moveNorth=this.handleMove.bind(this, 38);
+        this.moveSouth=this.handleMove.bind(this, 40);
+        this.moveEast=this.handleMove.bind(this, 39);
+        this.moveWest=this.handleMove.bind(this, 37)
         if (this.props.setEvents) {
             window.addEventListener('keydown', this._keydown);
         }
@@ -129,8 +145,11 @@ export default React.createClass({
         this.props.dispatch(addHint(current.join(''), CLIENT_BOUNDARY_MAP[boundary]));
     },
     _keydown: function (e) {
+        this.handleMove(e.keyCode)
+    },
+    handleMove: function (directionInt) {
         let current = this.props.match.get('position').toJS();
-        let update = moveMap[e.keyCode](current);
+        let update = moveMap[directionInt](current);
         if (MC.evaluate(this.props.walls, current, update)) {
             let atEnd = parseInt(update.join(''), 10) - parseInt(this.props.getGoal().join(''), 10) === 0;
             this.props.dispatch(updatePosition(update, atEnd));

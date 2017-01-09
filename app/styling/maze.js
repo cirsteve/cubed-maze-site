@@ -53,5 +53,10 @@ export default {
 
     expiredMessage: {
         backgroundColor: TC(colors.fail).lighten(20).toString()
+    },
+    controlBtn: {
+        border: '2px solid black',
+        borderRadius: '2px',
+        padding: '3px'
     }
 }
