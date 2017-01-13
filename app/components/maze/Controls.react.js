@@ -26,7 +26,7 @@ let DirectionControls = React.createClass({
         return (
             <div style={mazeStyle.directionControls}>
                 <div onTouchEnd={this.props.moveNorth}>
-                    <div style={centerStyle} style={mazeStyle.controlBtn onTouchEnd={this.props.moveNorth}}>
+                    <div style={centerStyle} style={mazeStyle.controlBtn} onTouchEnd={this.props.moveNorth}>
                         <FA name="arrow-up" size="2x" />
                     </div>
                 </div>

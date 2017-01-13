@@ -242,19 +242,19 @@ export default React.createClass({
         let hint = this.hint.clone();
         switch(direction){
             case 'north':
-                hint.rotation.x = Math.PI * 180 * 180;
+                hint.rotation.x = Math.PI / -2;
                 break;
             case 'west':
-                hint.rotation.x = Math.PI / 2;
+                hint.rotation.z = Math.PI / 2;
                 break;
             case 'east':
-                hint.rotation.z = Math.PI / 2 * -1;
+                hint.rotation.z = Math.PI / -2;
                 break;
             case 'south':
-                hint.rotation.z = Math.PI / 2 * -1;
+                hint.rotation.x = 90 * Math.PI / 180;
                 break;
             case 'down':
-                hint.rotation.x = Math.PI / 2 * -1;
+                hint.rotation.x = 180 * Math.PI / -180;
                 break;
         }
         let halfUl = ul/2;
