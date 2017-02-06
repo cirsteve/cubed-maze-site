@@ -9,7 +9,7 @@ import Success from './maze/Success.react';
 import TimeExpired from './maze/TimeExpired.react';
 import Timer from './maze/Timer.react';
 
-import { createGame, leaveGame, setInstructions } from '../actions/AppActions';
+import { createMaze, leaveGame, setInstructions } from '../actions/AppActions';
 
 let menuStyle = {
     display: 'flex',
@@ -69,7 +69,7 @@ export default React.createClass({
         this.props.dispatch(leaveGame());
     },
     _refreshLevel: function () {
-        this.props.dispatch(createGame(this.props.getMaze().get('dimensions').toJS(), this.props.app.get('clientMaze')));
+        this.props.dispatch(createMaze(this.props.getMaze().get('dimensions').toJS(), this.props.app.get('clientMaze')));
     },
     showInstructions: function () {
     },

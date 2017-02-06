@@ -6,6 +6,7 @@ import {Scene, PerspectiveCamera, SpotLight, PointLight,
     CircleGeometry, LineBasicMaterial, SphereGeometry, Vector3, PlaneGeometry,
     Geometry, Line, MeshBasicMaterial, CylinderGeometry, Mesh, Color, Group} from 'three';
 import { updatePosition} from '../../../actions/MatchActions';
+import TWEEN from 'tween.js';
 
 export default React.createClass({
     UNIT_LENGTH: 5,
@@ -13,9 +14,9 @@ export default React.createClass({
     WIDTH: 300,
     HEIGHT: 300,
     COLORS: {
-        wall: 0xFF0033,
-        outerWall: 0x104E8B,
-        ceiling: 0x009933,
+        wall: 0xe78708,
+        outerWall: 0xe78708,
+        ceiling: 0x2bb146,
         floor: 0x33CCFF,
         marker: 0x9900FF,
         goal: 0xFFCC00,
@@ -84,10 +85,10 @@ export default React.createClass({
     initWall: function () {
         let ul = this.UNIT_LENGTH
         let geometry = new BoxGeometry( ul, 4, ul/10  );
-        let material = new MeshLambertMaterial( { color: this.COLORS.wall } );
+        let material = new MeshLambertMaterial( { color: this.COLORS.outerWall } );
 
-        //material.opacity = 0.9;
-        //wmaterial.transparent = true;
+        material.opacity = 0.8;
+        material.transparent = true;
 
         let cube = new Mesh( geometry, material );
         return cube;
@@ -100,7 +101,7 @@ export default React.createClass({
 
         material.opacity = 0.3;
         material.transparent = true;
-        material.emissive = new Color(this.COLORS.outerWall);
+        material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
         let wall = new Mesh( geometry, material );
         wall.position.set(ul*dimensions.get('x')/2,-ul/2,ul*dimensions.get('y')/-2);
         return wall;
@@ -112,8 +113,8 @@ export default React.createClass({
         let material = new MeshLambertMaterial( { color: this.COLORS.outerWall } );
 
         material.opacity = 0.3;
-        material.transparent = true;
-        material.emissive = new Color(this.COLORS.outerWall);
+        //material.transparent = true;
+        material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
         let wall = new Mesh( geometry, material );
         wall.position.x = ul*dimensions.get('x')/2;
         return wall;
@@ -121,8 +122,8 @@ export default React.createClass({
     initFloor: function () {
         let ul = this.UNIT_LENGTH
         let geometry = new BoxGeometry( .8*ul, ul/10, .8*ul );
-        let material = new MeshLambertMaterial({color: this.COLORS.ceiling});
-        material.emissive = new Color(this.COLORS.floor)
+        let material = new MeshLambertMaterial({color: this.COLORS.floor});
+        material.emissive.setRGB(material.color.r, material.color.g, material.color.b)
 
         material.opacity = 0.5;
         material.transparent = true;
@@ -167,7 +168,7 @@ export default React.createClass({
         scene.add(spotLight);
 
         this.camera = new PerspectiveCamera(90, this.HEIGHT/this.WIDTH, .1, 5000 );
-        this.camera.position.z = -7;
+        this.camera.position.z = -9 ;
         this.camera.position.y = ul * 4;
         this.camera.position.x = ul * 3;
         this.camera.rotation.x = -20.2;
@@ -186,11 +187,13 @@ export default React.createClass({
 
         ReactDOM.findDOMNode(this.refs.mazeTarget).appendChild( this.renderer.domElement );
 
-        this.addLevelToScene(0)
+        this.addLevelToScene(0);
+        this.initMarkerBounce();
 
         this.renderScene  = this.getRenderer(this.renderer, this.scene.scene, this.camera);
     },
     render: function () {
+        console.log('rendering 3d maze');
         return (
                 <div ref="mazeTarget" className="maze-target"></div>);
     },
@@ -203,7 +206,8 @@ export default React.createClass({
         var bm  = this.bounceMarker;
         function render() {
                 requestAnimationFrame( render );
-                bm();
+                //bm();
+                TWEEN.update();
                 renderer.render( scene, camera );
         }
 
@@ -211,13 +215,13 @@ export default React.createClass({
     },
     componentDidUpdate: function () {
         if (this.props.newMaze) {
-            this.addHints = Map();
-            this.scene.scene.remove(this.objectCache.levels[this.objectCache.levels.length-1])
+            this.addedHints = Map();
+            let scene = this.scene.scene;
+            this.objectCache.levels.forEach(l=>scene.remove(l));
             let oldLevels = this.objectCache.levels;
             this.objectCache.levels = [];
             oldLevels.forEach(level=>{
                 level.children.forEach(mesh=>{
-                    console.log('m is', mesh);
                     if (mesh.geometry) mesh.geometry.dispose();
                     if (mesh.material) mesh.material.dispose();
                 });
@@ -279,6 +283,21 @@ export default React.createClass({
         this.objectCache.marker.position.x = position[0] * ul + (ul/2);
         this.objectCache.marker.position.z = (position[1] * ul + (ul/2)) * -1;
     },
+    initMarkerBounce: function () {
+        let flr = -1.5;
+        let ceil = 1.2;
+        let marker = this.objectCache.marker;
+        let up = new TWEEN.Tween(marker.position.y).to(ceil, 500)
+            .onUpdate(pos=>marker.position.y=pos)
+            //.easing(TWEEN.Easing.Elastic.InOut);
+        let down = new TWEEN.Tween(ceil).to(flr, 500)
+            .onUpdate(pos=>marker.position.y=pos)
+            //.easing(TWEEN.Easing.Elastic.InOut);
+        up.chain(down);
+        down.chain(up);
+        up.start();
+
+    },
     bounceMarker: function () {
         var flr = -1.5;
         var ceil = 1.5;
@@ -337,7 +356,7 @@ export default React.createClass({
     },
     getOuterCeiling: function () {
         let wall = this.outerWall.clone();
-        wall.position.y = 2;
+        wall.position.y = this.UNIT_LENGTH/2;
         return wall;
     },
     addOuterWalls: function (group) {
@@ -418,7 +437,7 @@ export default React.createClass({
         this.addOuterWalls(group)
         if (ultimateLevel === level) {
             //group.add(this.goalLight.clone());
-            group.add(this.getOuterCeiling())
+            //group.add(this.getOuterCeiling())
         } else if (level === 0) {
             group.add(this.getOuterFloor());
         }
