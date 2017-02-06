@@ -94,13 +94,14 @@ let LevelControls = React.createClass({
 
 export default React.createClass({
     render: function () {
-
+        let limitReached = this.props.hintCount === this.props.hintLimit;
         return (
             <div style={mazeStyle.controlGroup}>
                 <LevelControls moveUp={this.moveUp} moveDown={this.moveDown}/>
                 <div>
                     <button type="button"
-                        onClick={this._addHint}>Get Hint</button>
+                        onClick={limitReached ? null : this._addHint}
+                        disabled={limitReached ? true : false}>Get Hint {this.props.hintCount}/{this.props.hintLimit}</button>
                     <LevelIndicator levels={this.props.maxLevels} level={this.props.level} />
                 </div>
                 <DirectionControls

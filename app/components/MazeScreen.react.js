@@ -27,7 +27,14 @@ export default React.createClass({
         let gameState = maze.get('gameState');
         let gameOn = gameState === 'inplay';
         let dimensions = this.props.getMaze().get('dimensions').toJS();
-        let controls = gameOn ? <Controls {...this.props} maxLevels={dimensions.z} level={maze.get('position').get(2)+1} walls={this.props.getMaze().toJS().walls} setEvents={true} /> : null;
+        let controls = gameOn ?
+            <Controls {...this.props}
+                maxLevels={dimensions.z}
+                level={maze.get('position').get(2)+1}
+                walls={this.props.getMaze().toJS().walls}
+                setEvents={true}
+                hintCount={this.props.match.get('hints').size}
+                hintLimit={this.props.getHintLimit()} />: null;
         let overlay =  gameState === 'preplay' ? <Overlay  dispatch={this.props.dispatch} /> : null;
         let timer = <Timer level={dimensions.z}
             atGoal={gameState === 'success'}

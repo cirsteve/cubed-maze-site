@@ -57,6 +57,9 @@ const stateToProps = function (state) {
                 level.push(levels[idx-1] ? levels[idx-1][2] : []);
                 return level;
             });
+        },
+        getHintLimit: function() {
+            return Math.floor(this.maze.get('maze').get('dimensions').get('z') / 3) + 1;
         }
     };
 }

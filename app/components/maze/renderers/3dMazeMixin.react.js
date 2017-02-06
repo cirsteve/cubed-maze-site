@@ -15,9 +15,9 @@ export default React.createClass({
     HEIGHT: 300,
     COLORS: {
         wall: 0xe78708,
-        outerWall: 0xe78708,
-        ceiling: 0x2bb146,
-        floor: 0x33CCFF,
+        outerWall: 0xD3D612,
+        ceiling: 0x33BBFF,
+        floor: 0xB86507,
         marker: 0x9900FF,
         goal: 0xFFCC00,
         hint: 0x33FF00
@@ -56,7 +56,7 @@ export default React.createClass({
     initRenderer: function () {
         let renderer = new WebGLRenderer({antialias: true});
         renderer.setSize( this.WIDTH, this.HEIGHT);
-        renderer.setClearColor( 0x555555 );
+        renderer.setClearColor( 0xFFFFFF );
         return renderer;
     },
     createGameObjects: function () {
@@ -125,8 +125,8 @@ export default React.createClass({
         let material = new MeshLambertMaterial({color: this.COLORS.floor});
         material.emissive.setRGB(material.color.r, material.color.g, material.color.b)
 
-        material.opacity = 0.5;
-        material.transparent = true;
+        //material.opacity = 0.5;
+        //material.transparent = true;
 
         let cube = new Mesh( geometry, material );
         cube.position.y = -2;
@@ -139,7 +139,7 @@ export default React.createClass({
         let material = new MeshLambertMaterial({color: this.COLORS.ceiling});
         material.emissive = new Color(this.COLORS.ceiling)
 
-        material.opacity = 0.5;
+        material.opacity = 0.6;
         material.transparent = true;
 
         let cube = new Mesh( geometry, material );
@@ -168,10 +168,10 @@ export default React.createClass({
         scene.add(spotLight);
 
         this.camera = new PerspectiveCamera(90, this.HEIGHT/this.WIDTH, .1, 5000 );
-        this.camera.position.z = -9 ;
-        this.camera.position.y = ul * 4;
+        this.camera.position.z = -12;
+        this.camera.position.y = ul * 3.7;
         this.camera.position.x = ul * 3;
-        this.camera.rotation.x = -20.2;
+        this.camera.rotation.x = -20.3;
         scene.add(this.camera);
 
     },
@@ -439,15 +439,13 @@ export default React.createClass({
             //group.add(this.goalLight.clone());
             //group.add(this.getOuterCeiling())
         } else if (level === 0) {
-            group.add(this.getOuterFloor());
+            //group.add(this.getOuterFloor());
         }
+        group.add(this.getOuterFloor());
         this.addWallObjects(group, walls[0], this.addVerticalWall);
         this.addWallObjects(group, walls[1], this.addHorizontalWall);
         this.addWallObjects(group, walls[3], this.addFloor);
         this.addWallObjects(group, walls[2], this.addCeiling);
-
-
-
         return group;
     }
 });
