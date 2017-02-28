@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import { Map } from 'immutable';
 import {Scene, PerspectiveCamera, SpotLight, PointLight,
     AxisHelper, GridHelper, WebGLRenderer, BoxGeometry, MeshPhongMaterial, MeshLambertMaterial,
-    CircleGeometry, LineBasicMaterial, SphereGeometry, Vector3, PlaneGeometry,
-    Geometry, Line, MeshBasicMaterial, CylinderGeometry, Mesh, Color, Group} from 'three';
+    CircleGeometry, LineBasicMaterial, SphereGeometry, Vector3, PlaneGeometry, Geometry, Line,
+    MeshBasicMaterial, CylinderGeometry, Mesh, Color, Group, Raycaster, Vector2} from 'three';
 import { updatePosition} from '../../../actions/MatchActions';
 import TWEEN from 'tween.js';
+import { evaluateMove } from '../Controls.react';
 
 export default React.createClass({
     UNIT_LENGTH: 5,
@@ -34,9 +35,12 @@ export default React.createClass({
         this.floor = this.initFloor();
         this.ceiling = this.initCeiling();
         this.marker = this.initMarker();
+        this.touchTarget = this.initTouchTarget();
         this.goalLight = this.initGoalLight();
         this.renderer = this.initRenderer();
         this.hint = this.initHint();
+        this.raycaster = new Raycaster();
+        this.mouse = new Vector2();
         this.objectCache = this.createGameObjects();
     },
     initScene: function () {
@@ -51,7 +55,8 @@ export default React.createClass({
 
         let geometry = new CylinderGeometry(0.1, 1, 3);
         let material = new MeshBasicMaterial( {color: this.COLORS.hint} );
-        return new Mesh( geometry, material );
+        let mesh = new Mesh( geometry, material );
+        mesh.name = 'hint';
     },
     initRenderer: function () {
         let renderer = new WebGLRenderer({antialias: true});
@@ -66,6 +71,7 @@ export default React.createClass({
             levels: this.createLevels(),
             marker: this.createMarker(),
             hints:[],
+            touchTargets: this.createTouchTargets()
         };
     },
     initGoalLight: function () {
@@ -91,6 +97,7 @@ export default React.createClass({
         material.transparent = true;
 
         let cube = new Mesh( geometry, material );
+        cube.name = 'wall';
         return cube;
     },
     initOuterWall: function () {
@@ -104,6 +111,7 @@ export default React.createClass({
         material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
         let wall = new Mesh( geometry, material );
         wall.position.set(ul*dimensions.get('x')/2,-ul/2,ul*dimensions.get('y')/-2);
+        wall.name = 'outerWall';
         return wall;
     },
     initOuterSideWall: function () {
@@ -117,6 +125,7 @@ export default React.createClass({
         material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
         let wall = new Mesh( geometry, material );
         wall.position.x = ul*dimensions.get('x')/2;
+        wall.name = 'outerSideWall';
         return wall;
     },
     initFloor: function () {
@@ -130,6 +139,7 @@ export default React.createClass({
 
         let cube = new Mesh( geometry, material );
         cube.position.y = -2;
+        cube.name = 'floor';
 
         return cube;
     },
@@ -145,14 +155,25 @@ export default React.createClass({
         let cube = new Mesh( geometry, material );
 
         cube.position.y = 2;
+        cube.name = 'ceiling';
         return cube;
     },
+    initTouchTarget: function () {
+        let ul = this.UNIT_LENGTH
+        let geometry = new PlaneGeometry( ul, ul, 2);
+        let mesh = new Mesh(geometry, new MeshBasicMaterial({color: this.COLORS.marker }));
+        mesh.rotation.x =  Math.PI / -2;
+        mesh.name = 'touchTarget';
+        return mesh;
+    },
+
     initMarker: function () {
         var ul = this.UNIT_LENGTH;
         var sphereGeometry = new SphereGeometry( 1.3, 12, 12 );
         var sphereMaterial = new MeshLambertMaterial( {color: this.COLORS.marker } );
         let marker = new Mesh( sphereGeometry, sphereMaterial );
         marker.castShadow = true;
+        marker.name = 'marker';
         return marker;
     },
 
@@ -172,6 +193,7 @@ export default React.createClass({
         this.camera.position.y = ul * 3.7;
         this.camera.position.x = ul * 3;
         this.camera.rotation.x = -20.3;
+        //this.camera.updateProjectionMatrix();
         scene.add(this.camera);
 
     },
@@ -184,6 +206,7 @@ export default React.createClass({
 
         this.addFixedObjects(this.scene.scene);
         this.scene.scene.add(this.objectCache.marker);
+        Object.values(this.objectCache.touchTargets).forEach(t=>this.scene.scene.add(t.mesh));
 
         ReactDOM.findDOMNode(this.refs.mazeTarget).appendChild( this.renderer.domElement );
 
@@ -192,10 +215,28 @@ export default React.createClass({
 
         this.renderScene  = this.getRenderer(this.renderer, this.scene.scene, this.camera);
     },
+    onMouseDown: function (event) {
+        event.preventDefault();
+        var el = this.refs.mazeTarget;
+        let offsetLeft = el.offsetLeft + el.offsetParent.offsetLeft;
+        let offsetTop = el.offsetTop + el.offsetParent.offsetTop;
+        this.mouse.x = ( (event.clientX - offsetLeft) / el.offsetWidth) * 2 - 1;
+        this.mouse.y = - ( (event.clientY - offsetTop) / el.offsetHeight ) * 2 + 1;
+
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        let targets = Object.values(this.objectCache.touchTargets).map(t=>t.mesh);
+        let intersects = this.raycaster.intersectObjects(targets);
+
+        if (intersects.length) {
+            intersects[0].object.userData.handler()
+        }
+
+
+    },
     render: function () {
         console.log('rendering 3d maze');
         return (
-                <div ref="mazeTarget" className="maze-target"></div>);
+                <div ref="mazeTarget" className="maze-target" onMouseDown={this.onMouseDown}></div>);
     },
     addLevelToScene: function (level, remove) {
         if (remove) this.scene.scene.remove(remove);
@@ -267,22 +308,80 @@ export default React.createClass({
         return hint;
     },
 
+    createTouchTargets: function () {
+        let north = this.touchTarget.clone();
+        let south = this.touchTarget.clone();
+        let east = this.touchTarget.clone();
+        let west = this.touchTarget.clone();
+
+
+        let touchTargets = {
+            north: {
+                mesh: north,
+                direction: 'north'
+            },
+            south: {
+                mesh: south,
+                direction: 'south'
+            },
+            east: {
+                mesh: east,
+                direction: 'east'
+            },
+            west: {
+                mesh: west,
+                direction: 'west'
+            }
+        };
+
+        return touchTargets;
+    },
+
+    updateTouchTargets: function() {
+        let targets = ['north', 'south', 'east', 'west'];
+        let ul = this.UNIT_LENGTH;
+        let current= this.props.match.get('position').toJS();
+        let walls = this.props.walls;
+        let goal = this.props.goal;
+
+        let updateNorth = current;
+        updateNorth[2] = current[2] + 1;
+        let updateSouth = current;
+        updateSouth[2] = updateSouth[2] + 1;
+        let updateEast = current;
+        updateEast[2] = updateEast[2] + 1;
+        let updateWest = current;
+        updateWest[2] = updateWest[2] + 1;
+
+
+        this.objectCache.touchTargets.north.mesh.userData.handler =
+            evaluateMove.bind(this, current, updateNorth, walls, goal, this.props.dispatch, updatePosition);
+        this.objectCache.touchTargets.south.mesh.userData.handler
+            evaluateMove.bind(this, current, updateSouth, walls, goal, this.props.dispatch, updatePosition);
+        this.objectCache.touchTargets.east.mesh.userData.handler =
+            evaluateMove.bind(this, current, updateEast, walls, goal, this.props.dispatch, updatePosition);
+        this.objectCache.touchTargets.west.mesh.userData.handler =
+            evaluateMove.bind(this, current, updateWest, walls, goal, this.props.dispatch, updatePosition);
+
+        this.objectCache.touchTargets.north.mesh.position.set(current[0]*ul+(ul/2), 0, -current[1]*ul-(ul*1.5));
+        this.objectCache.touchTargets.south.mesh.position.set(current[0]*ul+(ul/2), 0, -current[1]*ul+(ul/2));
+        this.objectCache.touchTargets.east.mesh.position.set(current[0]*ul+ul+(ul/2), 0, -current[1]*ul-(ul/2));
+        this.objectCache.touchTargets.west.mesh.position.set(current[0]*ul-(ul/2), 0, -current[1]*ul-(ul/2));
+    },
+
     createMarker: function () {
         let ul = this.UNIT_LENGTH;
         let marker = this.marker.clone();
-        marker.position.x =  ul/2;
-        marker.position.y = 2;
-        marker.position.z = ul/2 * -1;
-
         return marker;
-
     },
     updateMarker: function () {
+        this.updateTouchTargets();
         let position = this.props.match.get('position').toJS();
         let ul = this.UNIT_LENGTH;
         this.objectCache.marker.position.x = position[0] * ul + (ul/2);
         this.objectCache.marker.position.z = (position[1] * ul + (ul/2)) * -1;
     },
+
     initMarkerBounce: function () {
         let flr = -1.5;
         let ceil = 1.2;
@@ -297,24 +396,6 @@ export default React.createClass({
         down.chain(up);
         up.start();
 
-    },
-    bounceMarker: function () {
-        var flr = -1.5;
-        var ceil = 1.5;
-        var marker = this.objectCache.marker;
-        var posY = marker.position.y;
-        var y = 0.3;
-        var animateUp = this.MARKER_ANIMATE_UP;
-        if (animateUp && posY > ceil) {
-            this.MARKER_ANIMATE_UP = false;
-            y = -0.08;
-        } else if (!animateUp && posY < flr) {
-            this.MARKER_ANIMATE_UP = true;
-            y = 0.06;
-        } else if (!animateUp) {
-            y = -0.08;
-        }
-        marker.translateY(y);
     },
 
     addGridLines: function (scene) {
@@ -420,7 +501,6 @@ export default React.createClass({
         group.add(floor);
     },
     createLevels: function () {
-        console.log('creating levels', this.props.levels);
         let ultimateLevel = this.props.currentMaze.get('dimensions').get('z')-1;
         return this.props.levels.map(this.createWallGroups.bind(this, ultimateLevel));
     },

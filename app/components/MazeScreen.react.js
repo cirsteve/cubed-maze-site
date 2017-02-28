@@ -53,7 +53,9 @@ export default React.createClass({
                     </div>
                 </div>
                 <div>
-                    <Maze {...this.props} dimensions={dimensions} />
+                    <Maze {...this.props}
+                        walls={this.props.getMaze().toJS().walls}
+                        dimensions={dimensions} />
 
                     <Success gameOver={gameState === 'success'? true : false}
                         dimensions={dimensions}
@@ -76,7 +78,9 @@ export default React.createClass({
         this.props.dispatch(leaveGame());
     },
     _refreshLevel: function () {
-        this.props.dispatch(createMaze(this.props.getMaze().get('dimensions').toJS(), this.props.app.get('clientMaze')));
+        this.props.dispatch(
+            createMaze(this.props.getMaze().get('dimensions').toJS(), this.props.app.get('clientMaze'))
+        );
     },
     showInstructions: function () {
     },

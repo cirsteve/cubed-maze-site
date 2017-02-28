@@ -16,6 +16,14 @@ const moveMap = {
     83:p=>[p[0], p[1], p[2]-1]
 };
 
+export const evaluateMove = function (current, update, walls, goal, dispatch, action) {
+    console.log('ev move: ', arguments);
+    if (MC.evaluate(walls, current, update)) {
+        let atEnd = parseInt(update.join(''), 10) - parseInt(goal.join(''), 10) === 0;
+        dispatch(action(update, atEnd));
+    }
+}
+
 let DirectionControls = React.createClass({
     render: function () {
         let centerStyle = {
@@ -101,7 +109,9 @@ export default React.createClass({
                 <div>
                     <button type="button"
                         onClick={limitReached ? null : this._addHint}
-                        disabled={limitReached ? true : false}>Get Hint {this.props.hintCount}/{this.props.hintLimit}</button>
+                        disabled={limitReached ? true : false}>
+                        Get Hint {this.props.hintCount}/{this.props.hintLimit}
+                    </button>
                     <LevelIndicator levels={this.props.maxLevels} level={this.props.level} />
                 </div>
                 <DirectionControls
@@ -150,10 +160,11 @@ export default React.createClass({
     },
     handleMove: function (directionInt) {
         let current = this.props.match.get('position').toJS();
-        let update = moveMap[directionInt](current);
-        if (MC.evaluate(this.props.walls, current, update)) {
-            let atEnd = parseInt(update.join(''), 10) - parseInt(this.props.getGoal().join(''), 10) === 0;
-            this.props.dispatch(updatePosition(update, atEnd));
-        }
+        evaluateMove(current,
+            moveMap[directionInt](current),
+            this.props.walls,
+            this.props.getGoal(),
+            this.props.dispatch,
+            updatePosition);
     }
 })
