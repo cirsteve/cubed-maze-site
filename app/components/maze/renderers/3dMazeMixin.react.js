@@ -344,19 +344,19 @@ export default React.createClass({
         let walls = this.props.walls;
         let goal = this.props.goal;
 
-        let updateNorth = current;
-        updateNorth[2] = current[2] + 1;
-        let updateSouth = current;
-        updateSouth[2] = updateSouth[2] + 1;
-        let updateEast = current;
-        updateEast[2] = updateEast[2] + 1;
-        let updateWest = current;
-        updateWest[2] = updateWest[2] + 1;
+        let updateNorth = current.slice();
+        updateNorth[1] = current[1] + 1;
+        let updateSouth = current.slice();
+        updateSouth[1] = updateSouth[1] - 1;
+        let updateEast = current.slice();
+        updateEast[0] = updateEast[0] + 1;
+        let updateWest = current.slice();
+        updateWest[0] = updateWest[0] - 1;
 
 
         this.objectCache.touchTargets.north.mesh.userData.handler =
             evaluateMove.bind(this, current, updateNorth, walls, goal, this.props.dispatch, updatePosition);
-        this.objectCache.touchTargets.south.mesh.userData.handler
+        this.objectCache.touchTargets.south.mesh.userData.handler =
             evaluateMove.bind(this, current, updateSouth, walls, goal, this.props.dispatch, updatePosition);
         this.objectCache.touchTargets.east.mesh.userData.handler =
             evaluateMove.bind(this, current, updateEast, walls, goal, this.props.dispatch, updatePosition);
