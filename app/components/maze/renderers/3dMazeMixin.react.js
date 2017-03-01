@@ -57,6 +57,7 @@ export default React.createClass({
         let material = new MeshBasicMaterial( {color: this.COLORS.hint} );
         let mesh = new Mesh( geometry, material );
         mesh.name = 'hint';
+        return mesh;
     },
     initRenderer: function () {
         let renderer = new WebGLRenderer({antialias: true});
@@ -272,6 +273,7 @@ export default React.createClass({
             this.updateMarker();
         } else if (this.scene.renderedLevel !== this.props.currentLevel) {
             this.addLevelToScene(this.props.currentLevel, this.objectCache.levels[this.scene.renderedLevel]);
+            this.updateTouchTargets();
         } else if (this.addedHints.size !== this.props.hints.size) {
             let newHint = this.props.hints.findEntry((v,k)=>!this.addedHints.has(k));
             this.addHint(newHint[0].split(''), newHint[1]);
