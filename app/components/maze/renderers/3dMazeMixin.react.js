@@ -161,11 +161,11 @@ export default React.createClass({
     },
     initTouchTarget: function () {
         let ul = this.UNIT_LENGTH
-        let geometry = new PlaneGeometry( ul, ul, 2);
+        let geometry = new PlaneGeometry( ul, ul);
         let material = new MeshLambertMaterial({color:this.COLORS.outerWall});
-        material.opacity = 0.0;
+        material.opacity = 0.5;
         material.transparent = true;
-        //material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
+        material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
         let wall = new Mesh( geometry, material );
         wall.rotation.x =  Math.PI / -2;
         wall.name = 'touchTarget';
@@ -369,10 +369,10 @@ export default React.createClass({
         this.objectCache.touchTargets.west.mesh.userData.handler =
             evaluateMove.bind(this, current, updateWest, walls, goal, this.props.dispatch, updatePosition);
 
-        this.objectCache.touchTargets.north.mesh.position.set(current[0]*ul+(ul/2), 0, -current[1]*ul-(ul*1.5));
-        this.objectCache.touchTargets.south.mesh.position.set(current[0]*ul+(ul/2), 0, -current[1]*ul+(ul/2));
-        this.objectCache.touchTargets.east.mesh.position.set(current[0]*ul+ul+(ul/2), 0, -current[1]*ul-(ul/2));
-        this.objectCache.touchTargets.west.mesh.position.set(current[0]*ul-(ul/2), 0, -current[1]*ul-(ul/2));
+        this.objectCache.touchTargets.north.mesh.position.set(current[0]*ul+(ul/2), -ul/2, -current[1]*ul-(ul*1.5));
+        this.objectCache.touchTargets.south.mesh.position.set(current[0]*ul+(ul/2), -ul/2, -current[1]*ul+(ul/2));
+        this.objectCache.touchTargets.east.mesh.position.set(current[0]*ul+ul+(ul/2), -ul/2, -current[1]*ul-(ul/2));
+        this.objectCache.touchTargets.west.mesh.position.set(current[0]*ul-(ul/2), -ul/2, -current[1]*ul-(ul/2));
     },
 
     createMarker: function () {
