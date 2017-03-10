@@ -162,10 +162,14 @@ export default React.createClass({
     initTouchTarget: function () {
         let ul = this.UNIT_LENGTH
         let geometry = new PlaneGeometry( ul, ul, 2);
-        let mesh = new Mesh(geometry, new MeshBasicMaterial({color: this.COLORS.marker }));
-        mesh.rotation.x =  Math.PI / -2;
-        mesh.name = 'touchTarget';
-        return mesh;
+        let material = new MeshLambertMaterial({color:this.COLORS.outerWall});
+        material.opacity = 0.0;
+        material.transparent = true;
+        //material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
+        let wall = new Mesh( geometry, material );
+        wall.rotation.x =  Math.PI / -2;
+        wall.name = 'touchTarget';
+        return wall;
     },
 
     initMarker: function () {
