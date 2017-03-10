@@ -26,12 +26,12 @@ export default React.createClass({
         let maze = this.props.match;
         let gameState = maze.get('gameState');
         let gameOn = gameState === 'inplay';
-        let dimensions = this.props.getMaze().get('dimensions').toJS();
+        let dimensions = this.props.getMaze().dimensions;
         let controls = gameOn ?
             <Controls {...this.props}
                 maxLevels={dimensions.z}
                 level={maze.get('position').get(2)+1}
-                walls={this.props.getMaze().toJS().walls}
+                walls={this.props.getMaze().walls}
                 setEvents={true}
                 hintCount={this.props.match.get('hints').size}
                 hintLimit={this.props.getHintLimit()} />: null;
@@ -53,9 +53,7 @@ export default React.createClass({
                     </div>
                 </div>
                 <div>
-                    <Maze {...this.props}
-                        walls={this.props.getMaze().toJS().walls}
-                        dimensions={dimensions} />
+                    <Maze {...this.props} />
 
                     <Success gameOver={gameState === 'success'? true : false}
                         dimensions={dimensions}
@@ -79,7 +77,7 @@ export default React.createClass({
     },
     _refreshLevel: function () {
         this.props.dispatch(
-            createMaze(this.props.getMaze().get('dimensions').toJS(), this.props.app.get('clientMaze'))
+            createMaze(this.props.getMaze().dimensions, this.props.app.get('clientMaze'))
         );
     },
     showInstructions: function () {

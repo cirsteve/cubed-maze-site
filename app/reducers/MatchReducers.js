@@ -51,6 +51,8 @@ export default function (state = initialState, action) {
                 gameState: 'preplay',
                 newMaze: true
             }));
+        case "ENTER_INSTRUCTION_SCREEN":
+            return state.set('newMaze', true);
         case 'ADD_HINT':
             return state.setIn(['hints', action.coords], action.direction);
         default:

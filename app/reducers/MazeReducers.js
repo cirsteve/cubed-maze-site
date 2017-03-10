@@ -7,7 +7,7 @@ const initialState = Map({
 export default function (state = initialState, action) {
     switch(action.type) {
         case 'MAZE_CREATED':
-            return state.set('maze', fromJS(action.maze));
+            return state.set('maze', action.maze);
             break;
         default:
             return state;

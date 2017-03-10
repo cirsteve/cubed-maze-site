@@ -10,13 +10,14 @@ export default React.createClass({
     render: function () {
         let maze = this.props.maze;
         let mazeComponent = <MazeRenderer {...this.props}
-            levels={this.props.getFormattedLevels(this.props.getMaze().get('walls').toJS())}
-            currentMaze={this.props.getMaze()}
+            levels={this.props.getFormattedLevels(this.props.getMaze().walls)}
+            dimensions={this.props.getMaze().dimensions}
+            walls={this.props.getMaze().walls}
             currentLevel={this.props.match.get('position').get(2)}
             newMaze={this.props.match.get('newMaze')}
             hints={this.props.match.get('hints')}
             goal={this.props.getGoal()} />;
-        let width = `${this.props.dimensions.x * 50}px`;
+        let width = `${this.props.getMaze().dimensions.x * 50}px`;
         let wrapperStyle = getStyle([
             [{width:width,margin: 'auto'}, true],
             [mazeStyle.gameOver, maze.get('gameState') === 'success' || maze.get('gameState') === 'lost']

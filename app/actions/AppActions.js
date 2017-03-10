@@ -8,6 +8,13 @@ export function updateScreen(screen) {
         screen
     };
 }
+
+export function enterInstructionScreen() {
+    return {
+        type: 'ENTER_INSTRUCTION_SCREEN'
+    };
+}
+
 export function initGame (id) {
     //exit lobby and enter game play mode
     return {

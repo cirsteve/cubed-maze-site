@@ -24,8 +24,15 @@ export default React.createClass({
         hint: 0x33FF00
     },
     componentDidMount: function () {
-        this.createScene();
+        console.log('3dm mount up');
+        this.generateScene();
+        this.createOrUpdateScene();
         document.addEventListener("keydown",this.props.dispatch(updatePosition), false);
+    },
+    componentWillUnmount: function () {
+        console.log('3dm unmount');
+        this.cleanupScene();
+        document.removeEventListener(document, "keydown");
     },
     initObjects: function () {
         //create the objects needs for the game
@@ -80,8 +87,8 @@ export default React.createClass({
         let ul = this.UNIT_LENGTH;
         ;
         // set its position
-        light.position.x = (this.props.currentMaze.get('dimensions').get('x')-1) * ul + ul/2;
-        light.position.z = (this.props.currentMaze.get('dimensions').get('y')-1) * -ul + ul/2;
+        light.position.x = (this.props.getMaze().dimensions.x-1) * ul + ul/2;
+        light.position.z = (this.props.getMaze().dimensions.y-1) * -ul + ul/2;
         light.position.y - ul/2;
         light.castShadow = true;
         light.intensity = 2;
@@ -103,29 +110,29 @@ export default React.createClass({
     },
     initOuterWall: function () {
         let ul = this.UNIT_LENGTH;
-        let dimensions = this.props.currentMaze.get('dimensions');
-        let geometry = new BoxGeometry( ul*dimensions.get('x'), 0.2, ul*dimensions.get('y') );
+        let dimensions = this.props.dimensions;
+        let geometry = new BoxGeometry( ul*dimensions.x, 0.2, ul*dimensions.y );
         let material = new MeshLambertMaterial( { color: this.COLORS.outerWall } );
 
         material.opacity = 0.3;
         material.transparent = true;
         material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
         let wall = new Mesh( geometry, material );
-        wall.position.set(ul*dimensions.get('x')/2,-ul/2,ul*dimensions.get('y')/-2);
+        wall.position.set(ul*dimensions.x/2,-ul/2,ul*dimensions.y/-2);
         wall.name = 'outerWall';
         return wall;
     },
     initOuterSideWall: function () {
         let ul = this.UNIT_LENGTH;
-        let dimensions = this.props.currentMaze.get('dimensions');
-        let geometry = new BoxGeometry( ul*dimensions.get('x'), 4, 0.2 );
+        let dimensions = this.props.dimensions;
+        let geometry = new BoxGeometry( ul*dimensions.x, 4, 0.2 );
         let material = new MeshLambertMaterial( { color: this.COLORS.outerWall } );
 
         material.opacity = 0.3;
         //material.transparent = true;
         material.emissive.setRGB(material.color.r, material.color.g, material.color.b);
         let wall = new Mesh( geometry, material );
-        wall.position.x = ul*dimensions.get('x')/2;
+        wall.position.x = ul*dimensions.x/2;
         wall.name = 'outerSideWall';
         return wall;
     },
@@ -203,7 +210,7 @@ export default React.createClass({
 
     },
 
-    createScene: function () {
+    generateScene: function () {
         this.scene = this.initScene();
 
         this.initObjects();
@@ -259,19 +266,22 @@ export default React.createClass({
 
         return render;
     },
-    componentDidUpdate: function () {
-        if (this.props.newMaze) {
-            this.addedHints = Map();
-            let scene = this.scene.scene;
-            this.objectCache.levels.forEach(l=>scene.remove(l));
-            let oldLevels = this.objectCache.levels;
-            this.objectCache.levels = [];
-            oldLevels.forEach(level=>{
-                level.children.forEach(mesh=>{
-                    if (mesh.geometry) mesh.geometry.dispose();
-                    if (mesh.material) mesh.material.dispose();
-                });
+    cleanupScene: function() {
+        this.addedHints = Map();
+        let scene = this.scene.scene;
+        this.objectCache.levels.forEach(l=>scene.remove(l));
+        let oldLevels = this.objectCache.levels;
+        this.objectCache.levels = [];
+        oldLevels.forEach(level=>{
+            level.children.forEach(mesh=>{
+                if (mesh.geometry) mesh.geometry.dispose();
+                if (mesh.material) mesh.material.dispose();
             });
+        });
+    },
+    createOrUpdateScene: function () {
+        if (this.props.newMaze) {
+            this.cleanupScene();
             this.objectCache.levels = this.createLevels()
             this.addLevelToScene(this.props.currentLevel);
             this.updateMarker();
@@ -287,7 +297,9 @@ export default React.createClass({
         }
         this.renderScene();
     },
-
+    componentDidUpdate: function () {
+        this.createOrUpdateScene();
+    },
     createHint: function (position, direction) {
         let ul = this.UNIT_LENGTH;
         let hint = this.hint.clone();
@@ -449,17 +461,17 @@ export default React.createClass({
     addOuterWalls: function (group) {
         let ul = this.UNIT_LENGTH;
         let wall = this.outerSideWall.clone();
-        let dimensions = this.props.currentMaze.get('dimensions');
+        let dimensions = this.props.dimensions;
         group.add(wall);
 
         let top = wall.clone();
-        top.position.z = -ul * dimensions.get('y');
+        top.position.z = -ul * dimensions.y;
         group.add(top);
 
         let right = wall.clone();
         right.rotation.y = Math.PI / 2;
-        right.position.x = dimensions.get('x') * ul;
-        right.position.z = dimensions.get('y') * ul / -2;
+        right.position.x = dimensions.x * ul;
+        right.position.z = dimensions.y * ul / -2;
         group.add(right)
 
         let left = right.clone();
@@ -507,7 +519,7 @@ export default React.createClass({
         group.add(floor);
     },
     createLevels: function () {
-        let ultimateLevel = this.props.currentMaze.get('dimensions').get('z')-1;
+        let ultimateLevel = this.props.dimensions.z-1;
         return this.props.levels.map(this.createWallGroups.bind(this, ultimateLevel));
     },
     addWallObjects: function(group, walls, renderer) {
