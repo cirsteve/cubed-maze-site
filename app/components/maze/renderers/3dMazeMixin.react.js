@@ -8,6 +8,7 @@ import {Scene, PerspectiveCamera, SpotLight, PointLight,
 import { updatePosition} from '../../../actions/MatchActions';
 import TWEEN from 'tween.js';
 import { evaluateMove } from '../Controls.react';
+import star from '../goalSymbol.react';
 
 export default React.createClass({
     UNIT_LENGTH: 5,
@@ -35,6 +36,9 @@ export default React.createClass({
         document.removeEventListener(document, "keydown");
     },
     initObjects: function () {
+        let ul = this.UNIT_LENGTH;
+        let dimensions = this.props.dimensions;
+
         //create the objects needs for the game
         this.wall = this.initWall();
         this.outerWall = this.initOuterWall();
@@ -46,9 +50,17 @@ export default React.createClass({
         this.goalLight = this.initGoalLight();
         this.renderer = this.initRenderer();
         this.hint = this.initHint();
+
+        //used for click controls
         this.raycaster = new Raycaster();
         this.mouse = new Vector2();
+
+        this.goalSymbol = star;
+        //this.goalSymbol.rotation.y = 280;
+        this.goalSymbol.position.set(ul*dimensions.x - (ul/2), 1, -ul*dimensions.y + (ul/2));
+
         this.objectCache = this.createGameObjects();
+
     },
     initScene: function () {
         return {
@@ -224,6 +236,7 @@ export default React.createClass({
 
         this.addLevelToScene(0);
         this.initMarkerBounce();
+        this.initGoalSpin()
 
         this.renderScene  = this.getRenderer(this.renderer, this.scene.scene, this.camera);
     },
@@ -275,7 +288,13 @@ export default React.createClass({
         oldLevels.forEach(level=>{
             level.children.forEach(mesh=>{
                 if (mesh.geometry) mesh.geometry.dispose();
-                if (mesh.material) mesh.material.dispose();
+                if (mesh.material) {
+                    if (mesh.material.materials) {
+                        mesh.material.materials.forEach(m=>m.dispose())
+                    } else {
+                        mesh.material.dispose();
+                    }
+                }
             });
         });
     },
@@ -416,6 +435,19 @@ export default React.createClass({
 
     },
 
+    initGoalSpin: function () {
+        let goal = this.goalSymbol;
+        let angle = 359;
+        let spin = new TWEEN.Tween(goal.rotation.y).to(1, 1500)
+            .onUpdate(rot=>{
+                console.log('updating spin', goal.rotation.y, rot);
+                let ang = rot * 360;
+                if (ang>angle) rot=0.0;
+                goal.rotation.y=ang;
+            });
+        spin.start();
+    },
+
     addGridLines: function (scene) {
         var config = this.props.getMaze().get('dimensions').toJS();
         var ul = this.UNIT_LENGTH;
@@ -534,11 +566,10 @@ export default React.createClass({
         let group = new Group();
         this.addOuterWalls(group)
         if (ultimateLevel === level) {
-            //group.add(this.goalLight.clone());
-            //group.add(this.getOuterCeiling())
-        } else if (level === 0) {
-            //group.add(this.getOuterFloor());
+            group.add(this.goalSymbol);
+            //this.initGoalSpin();
         }
+
         group.add(this.getOuterFloor());
         this.addWallObjects(group, walls[0], this.addVerticalWall);
         this.addWallObjects(group, walls[1], this.addHorizontalWall);

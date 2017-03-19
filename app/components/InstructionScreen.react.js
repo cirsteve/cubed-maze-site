@@ -4,6 +4,7 @@ import cn from 'classnames';
 import Controls from './maze/Controls.react'
 import MazeRenderer from './maze/renderers/3dMazeMixin.react';
 import { updateScreen, createMaze } from '../actions/AppActions';
+//import RGL from './reactGl.react';
 
 
 export default React.createClass({
