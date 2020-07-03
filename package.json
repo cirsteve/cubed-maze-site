@@ -4,6 +4,8 @@
   "description": "testing",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "build": "npx webpack --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Steven Ciraolo <steven.ciraolo@gmail.com>",
