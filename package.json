@@ -1,7 +1,7 @@
 {
   "name": "cb2",
   "version": "1.0.0",
-  "description": "testing",
+  "description": "Multi-dimensioanl maze game",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
